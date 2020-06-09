@@ -1,1 +1,22 @@
-<p>todo-list works!</p>
+<div class="row">
+    <div class="col-xs-12 col-lg-12">
+        <div style="display: flex;" class="btn-group" role="group" aria-label="Basic example">
+            <!-- <div class="col-xs-6 col-lg-6"> -->
+                <button style="flex: 1;" type="button" class="btn btn-success">Completed</button>
+            <!-- </div>
+            <div class="col-xs-6 col-lg-6"> -->
+                <button style="flex: 1;" type="button" class="btn btn-warning">Outstanding</button>
+            <!-- </div> -->
+        </div>
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-xs-12 col-lg-12">
+        <app-todo-detail
+            *ngFor="let todo of todos; let i = index;"
+            [todo]="todo"
+            [todo-index]="i">
+        </app-todo-detail>
+    </div>    
+</div>
