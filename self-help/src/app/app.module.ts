@@ -8,6 +8,10 @@ import { TodoTypesComponent } from './to-dos/todo-types/todo-types.component';
 import { TodoListComponent } from './to-dos/todo-list/todo-list.component';
 import { TodoDetailComponent } from './to-dos/todo-list/todo-detail/todo-detail.component';
 
+import { CardBodyToggleDirective } from './custom-directives/card-body-toggle.directive';
+
+import { TodoStatusPipe } from './custom-pipes/todo-status.pipe';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -15,7 +19,9 @@ import { TodoDetailComponent } from './to-dos/todo-list/todo-detail/todo-detail.
     ToDosComponent,
     TodoTypesComponent,
     TodoListComponent,
-    TodoDetailComponent
+    TodoDetailComponent,
+    CardBodyToggleDirective,
+    TodoStatusPipe
   ],
   imports: [
     BrowserModule

@@ -10,10 +10,11 @@ export class TodoDetailComponent implements OnInit {
 
   @Input('todo') todo: Todo;
   @Input('todo-index') index: number;
-
+  
   constructor() { }
 
   ngOnInit(): void {
   }
+
 
 }

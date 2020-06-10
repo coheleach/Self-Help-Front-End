@@ -9,24 +9,29 @@ export class TodoService {
             'Get Bread',
             'Pick up a loaf of bread from the grocery store',
             'groceries',
-            new Date(2019, 6, 9)
+            new Date(2019, 6, 9,),
+            new Date(2019,1,1),
+            true
         ),
         new Todo(
             'Pick jeffrey up from Daycare',
             '',
             'family',
-            new Date(2020, 12, 1)
+            new Date(2020, 12, 1),
+            new Date(2019,2,2)
         ),
         new Todo(
             'Clear the lawn',
             'Just the leaves',
             'maintinence',
-            new Date(20201, 1, 1)
+            new Date(20201, 1, 1),
+            new Date(2019,3,3)
         )
     ];
 
     getTodos(): Todo[] {
         return this.todos.slice();
+        console.log(this.todos.slice());
     }
 
 

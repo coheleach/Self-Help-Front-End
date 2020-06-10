@@ -5,7 +5,7 @@ export class Todo {
         public description: string,
         public category: string,
         public deadlineDate: Date,
-        public creationDate?: Date,
+        public creationDate: Date,
         public completed?: boolean ) {
         if(!creationDate) {
             creationDate = new Date()
