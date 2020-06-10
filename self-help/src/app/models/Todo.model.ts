@@ -6,12 +6,10 @@ export class Todo {
         public category: string,
         public deadlineDate: Date,
         public creationDate: Date,
-        public completed?: boolean ) {
+        public completed: boolean ) {
+        
         if(!creationDate) {
             creationDate = new Date()
-        }
-        if(!completed) {
-            completed = false;
         }
     }
         

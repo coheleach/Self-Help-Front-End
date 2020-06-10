@@ -11,7 +11,7 @@
 <div class="row">
     <div class="col-xs-12 col-lg-12">
         <app-todo-detail
-            *ngFor="let todo of todos | todoFilter:'completed':'true'; let i = index;"
+            *ngFor="let todo of todos;  let i = index;"
             [todo]="todo"
             [todo-index]="i">
         </app-todo-detail>

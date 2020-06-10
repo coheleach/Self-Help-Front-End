@@ -18,14 +18,16 @@ export class TodoService {
             '',
             'family',
             new Date(2020, 12, 1),
-            new Date(2019,2,2)
+            new Date(2019,2,2),
+            false
         ),
         new Todo(
             'Clear the lawn',
             'Just the leaves',
             'maintinence',
             new Date(20201, 1, 1),
-            new Date(2019,3,3)
+            new Date(2019,3,3),
+            false
         )
     ];
 
