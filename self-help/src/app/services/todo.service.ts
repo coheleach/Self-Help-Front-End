@@ -1,8 +1,12 @@
 import { Todo } from '../models/Todo.model';
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 
 @Injectable({providedIn: 'root'})
 export class TodoService {
+
+    completionStatusFilter: Subject<string> = new Subject<string>();
+    categoryFilter: Subject<string> = new Subject<string>();
 
     private todos: Todo[] = [
         new Todo(
@@ -33,8 +37,18 @@ export class TodoService {
 
     getTodos(): Todo[] {
         return this.todos.slice();
-        console.log(this.todos.slice());
     }
 
+    setCompletionStatusFilter(status: string) {
+        this.completionStatusFilter.next(status);
+    }
 
+    setCategoryFilter(category: string) {
+        this.categoryFilter.next(category);
+    }
+
+    clearAllFilters() {
+        this.completionStatusFilter.next('');
+        this.categoryFilter.next('');
+    }
 }

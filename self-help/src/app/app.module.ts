@@ -11,6 +11,7 @@ import { TodoDetailComponent } from './to-dos/todo-list/todo-detail/todo-detail.
 import { CardBodyToggleDirective } from './custom-directives/card-body-toggle.directive';
 
 import { TodoStatusPipe } from './custom-pipes/todo-status.pipe';
+import { TodoCompletionStatusComponent } from './to-dos/todo-completion-status/todo-completion-status.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { TodoStatusPipe } from './custom-pipes/todo-status.pipe';
     TodoListComponent,
     TodoDetailComponent,
     CardBodyToggleDirective,
-    TodoStatusPipe
+    TodoStatusPipe,
+    TodoCompletionStatusComponent
   ],
   imports: [
     BrowserModule
