@@ -10,12 +10,26 @@ import { Todo } from 'src/app/models/Todo.model';
 export class TodoListComponent implements OnInit {
 
   todos: Todo[] = [];
+  completionFilterStatus: string;
 
   constructor(private todoService: TodoService) { }
 
   ngOnInit(): void {
+    this.completionFilterStatus = 'false';
     this.todos = this.todoService.getTodos();
-    console.log(this.todos);
+    //console.log(this.todos);
+  }
+
+  onClickAny() {
+    this.completionFilterStatus = '';
+  }
+
+  onClickCompleted() {
+    this.completionFilterStatus = 'true';
+  }
+
+  onClickOutstanding() {
+    this.completionFilterStatus = 'false';
   }
 
 }

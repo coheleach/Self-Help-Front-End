@@ -1,9 +1,24 @@
 <div class="row">
     <div class="col-xs-12 col-lg-12">
         <div style="display: flex;" class="btn-group" role="group" aria-label="Basic example">
-                <button style="flex: 1;" type="button" class="btn btn-success">Completed</button>
-                <button style="flex: 1" type="button" class="btn btn-info">All</button>
-                <button style="flex: 1;" type="button" class="btn btn-warning">Outstanding</button>
+                <button 
+                    style="flex: 1;" 
+                    type="button" 
+                    class="btn btn-success" 
+                    (click)="onClickCompleted()"
+                    >Completed</button>
+                <button 
+                    style="flex: 1" 
+                    type="button" 
+                    class="btn btn-info" 
+                    (click)="onClickAny()"
+                    >All</button>
+                <button 
+                    style="flex: 1;" 
+                    type="button" 
+                    class="btn btn-warning" 
+                    (click)="onClickOutstanding()"
+                    >Outstanding</button>
         </div>
     </div>
 </div>
@@ -11,7 +26,7 @@
 <div class="row">
     <div class="col-xs-12 col-lg-12">
         <app-todo-detail
-            *ngFor="let todo of todos;  let i = index;"
+            *ngFor="let todo of todos | todoFilter:'completed':completionFilterStatus;  let i = index;"
             [todo]="todo"
             [todo-index]="i">
         </app-todo-detail>

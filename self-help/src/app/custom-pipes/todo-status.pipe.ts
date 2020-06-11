@@ -8,9 +8,14 @@ export class TodoStatusPipe implements PipeTransform {
 
     transform(todos: Todo[], property: string, desiredValue: string) {
         let filteredArray: Todo[] = [];
+
+        if(desiredValue == '') {
+            return todos;
+        }
+
         for(const todo of todos) {
             console.log(todo[property]);
-            if(todo[property] == desiredValue) {
+            if(String(todo[property]) == desiredValue) {
                 filteredArray.push(todo);
             }
         }
