@@ -5,8 +5,11 @@ import { Subject } from 'rxjs';
 @Injectable({providedIn: 'root'})
 export class TodoService {
 
+    
     completionStatusFilter: Subject<string> = new Subject<string>();
-    categoryFilter: Subject<string> = new Subject<string>();
+    categoryFilter: Subject<string[]> = new Subject<string[]>();
+    
+    private categoryFilterArray: string[] = [];
 
     private todos: Todo[] = [
         new Todo(
@@ -43,12 +46,18 @@ export class TodoService {
         this.completionStatusFilter.next(status);
     }
 
-    setCategoryFilter(category: string) {
-        this.categoryFilter.next(category);
+    getCategoryFilter(): string[] {
+        return this.categoryFilterArray.slice();
+    }
+
+    setCategoryFilter(category: string[]) {
+        this.categoryFilterArray = category;
+        this.categoryFilter.next(this.categoryFilterArray);
     }
 
     clearAllFilters() {
         this.completionStatusFilter.next('');
-        this.categoryFilter.next('');
+        this.categoryFilterArray = [];
+        this.categoryFilter.next(this.categoryFilterArray);
     }
 }

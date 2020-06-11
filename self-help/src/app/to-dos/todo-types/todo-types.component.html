@@ -1,6 +1,8 @@
 <div class="row">
-    <div class="list-group">
+    <div class="list-group" #list_group>
         <a
+            active-on-click
+            (click)="onClickCategory('groceries')"
             class="list-group-item list-group-item-action">
             <span class="float-left">
                 <h4 class="list-group-item-text">Groceries</h4>
@@ -10,6 +12,8 @@
             </span>
         </a>
         <a
+            active-on-click
+            (click)="onClickCategory('travel')"
             class="list-group-item list-group-item-action">
             <span class="float-left">
                 <h4 class="list-group-item-text">Travel</h4>
@@ -19,6 +23,8 @@
             </span>
         </a>
         <a
+            active-on-click
+            (click)="onClickCategory('meeting')"
             class="list-group-item list-group-item-action">
             <span class="float-left">
                 <h4 class="list-group-item-text">Meeting</h4>
@@ -28,6 +34,8 @@
             </span>
         </a>
         <a
+            active-on-click
+            (click)="onClickCategory('family')"
             class="list-group-item list-group-item-action">
             <span class="float-left">
                 <h4 class="list-group-item-text">Family</h4>
@@ -37,6 +45,8 @@
             </span>
         </a>
         <a
+            active-on-click
+            (click)="onClickCategory('maintinence')"
             class="list-group-item list-group-item-action">
             <span class="float-left">
                 <h4 class="list-group-item-text">Maintinence</h4>
@@ -46,6 +56,8 @@
             </span>
         </a>
         <a
+            active-on-click
+            (click)="onClickCategory('other')"
             class="list-group-item list-group-item-action">
             <span class="float-left">
                 <h4 class="list-group-item-text">Other</h4>

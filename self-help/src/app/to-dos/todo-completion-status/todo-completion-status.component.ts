@@ -11,7 +11,7 @@ export class TodoCompletionStatusComponent implements OnInit {
   constructor(private todoService: TodoService) {}
 
   ngOnInit(): void {
-   }
+  }
 
    onClickAny() {
     this.todoService.setCompletionStatusFilter('');
