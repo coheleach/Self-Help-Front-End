@@ -1,0 +1,57 @@
+<div class="row">
+    <div class="col-xs-12 col-md-6 md-offset-3 col-lg-6 lg-offset-3">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input 
+                    type="text" 
+                    name="title" 
+                    class="form-control"
+                    formControlName="title">
+            </div>
+            <span
+                *ngIf="!form.get('title').valid && form.get('title').touched"
+                class="help-block"
+                >Required Input
+            </span>
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select 
+                    name="category" 
+                    class="form-control" 
+                    formControlName="category">
+                    <option value="groceries">Groceries</option>
+                    <option value="travel">Travel</option>
+                    <option value="meeting">Meeting</option>
+                    <option value="family">Family</option>
+                    <option value="maintinence">Maintinence</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea 
+                    name="description" 
+                    class="form-control"
+                    formControlName="description">
+                </textarea>
+            </div>
+            <div class="form-group">
+                <label for="deadlineDate">Date to Complete</label>
+                <input 
+                    name="deadlineDate" 
+                    type="date"
+                    class="form-control"
+                    placeholder="DD/MM/YYYY"
+                    formControlName="deadlineDate">
+           </div>
+           <span
+                *ngIf="!form.get('deadlineDate').valid && form.get('deadlineDate').touched"
+                class="help-block">Please Enter a Valid Date</span>
+           <button 
+            class="btn btn-primary" 
+            type="submit"
+            >Submit</button>
+       </form>
+    </div>
+</div>

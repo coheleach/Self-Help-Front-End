@@ -1,5 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
@@ -14,6 +16,13 @@ import { TodoStatusPipe } from './custom-pipes/todo-status.pipe';
 import { TodoCompletionStatusComponent } from './to-dos/todo-completion-status/todo-completion-status.component';
 import { ActiveOnClickDirective } from './custom-directives/active-on-click.directive';
 import { TodoCategoryPipe } from './custom-pipes/todo-category.pipe';
+import { TodoCreateComponent } from './to-dos/todo-create/todo-create.component';
+
+const routes: Routes = [
+  { path: '', pathMatch: 'full', redirectTo: 'todos' },
+  { path: 'todos', component: ToDosComponent },
+  { path: 'todos-create', component: TodoCreateComponent }
+]
 
 @NgModule({
   declarations: [
@@ -27,10 +36,14 @@ import { TodoCategoryPipe } from './custom-pipes/todo-category.pipe';
     TodoStatusPipe,
     TodoCompletionStatusComponent,
     ActiveOnClickDirective,
-    TodoCategoryPipe
+    TodoCategoryPipe,
+    TodoCreateComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    RouterModule.forRoot(routes),
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
