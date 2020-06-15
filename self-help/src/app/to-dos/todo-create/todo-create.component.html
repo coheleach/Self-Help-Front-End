@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-xs-12 col-md-6 md-offset-3 col-lg-6 lg-offset-3">
+    <div class="col-xs-12 col-md-6 offset-md-3">
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
             <div class="form-group">
                 <label for="title">Title</label>
@@ -12,7 +12,7 @@
             <span
                 *ngIf="!form.get('title').valid && form.get('title').touched"
                 class="help-block"
-                >Required Input
+                >required input
             </span>
             <div class="form-group">
                 <label for="category">Category</label>
@@ -45,9 +45,15 @@
                     placeholder="DD/MM/YYYY"
                     formControlName="deadlineDate">
            </div>
-           <span
-                *ngIf="!form.get('deadlineDate').valid && form.get('deadlineDate').touched"
-                class="help-block">Please Enter a Valid Date</span>
+           <div *ngIf="form.get('deadlineDate').touched">
+                <span
+                    *ngIf="form.get('deadlineDate').errors && form.get('deadlineDate').errors['required']"
+                    class="help-block">required input</span>
+                <span
+                    *ngIf="form.get('deadlineDate').errors && form.get('deadlineDate').errors['historicalDate']"
+                    class="help-block">the date can't be in the past</span>
+            </div>
+            <br>
            <button 
             class="btn btn-primary" 
             type="submit"

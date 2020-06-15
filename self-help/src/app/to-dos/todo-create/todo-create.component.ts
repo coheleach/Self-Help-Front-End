@@ -18,12 +18,25 @@ export class TodoCreateComponent implements OnInit {
       'title': new FormControl(null, Validators.required),
       'category': new FormControl('groceries'),
       'description': new FormControl(null),
-      'deadlineDate': new FormControl(null, Validators.required)
+      'deadlineDate': new FormControl(null, [Validators.required, this.invalidTodoDate.bind(this)])
     })
   }
 
   onSubmit() {
-    console.log(this.form);
+    console.log(this.form.get('deadlineDate').errors);
+    console.log(this.form.get('deadlineDate').touched);
+  }
+
+  invalidTodoDate(formControl: FormControl): {[key: string]: boolean} {
+    //validate that the date isn't in the past
+    if(formControl.value == null)
+    { return null; }
+    let todoDate = new Date(formControl.value);
+    let todaysDate = new Date();
+    if(todaysDate > todoDate) {
+      return { 'historicalDate': true }; 
+    }
+    return null;
   }
 
 }
