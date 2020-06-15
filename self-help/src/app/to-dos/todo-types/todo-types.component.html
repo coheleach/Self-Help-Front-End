@@ -1,70 +1,78 @@
 <div class="row">
-    <div class="list-group" #list_group>
-        <a
-            active-on-click
-            (click)="onClickCategory('groceries')"
-            class="list-group-item list-group-item-action">
-            <span class="float-left">
-                <h4 class="list-group-item-text">Groceries</h4>
-            </span>
-            <span class="float-right">
-                <i class="fas fa-shopping-cart fa-3x"></i>
-            </span>
-        </a>
-        <a
-            active-on-click
-            (click)="onClickCategory('travel')"
-            class="list-group-item list-group-item-action">
-            <span class="float-left">
-                <h4 class="list-group-item-text">Travel</h4>
-            </span>
-            <span class="float-right">
-                <i class="fas fa-car fa-3x"></i>
-            </span>
-        </a>
-        <a
-            active-on-click
-            (click)="onClickCategory('meeting')"
-            class="list-group-item list-group-item-action">
-            <span class="float-left">
-                <h4 class="list-group-item-text">Meeting</h4>
-            </span>
-            <span class="float-right">
-                <i class="fas fa-users fa-3x"></i>
-            </span>
-        </a>
-        <a
-            active-on-click
-            (click)="onClickCategory('family')"
-            class="list-group-item list-group-item-action">
-            <span class="float-left">
-                <h4 class="list-group-item-text">Family</h4>
-            </span>
-            <span class="float-right">
-                <i class="fas fa-child fa-3x"></i>
-            </span>
-        </a>
-        <a
-            active-on-click
-            (click)="onClickCategory('maintinence')"
-            class="list-group-item list-group-item-action">
-            <span class="float-left">
-                <h4 class="list-group-item-text">Maintinence</h4>
-            </span>
-            <span class="float-right">
-                <i class="fas fa-home fa-3x"></i>
-            </span>
-        </a>
-        <a
-            active-on-click
-            (click)="onClickCategory('other')"
-            class="list-group-item list-group-item-action">
-            <span class="float-left">
-                <h4 class="list-group-item-text">Other</h4>
-            </span>
-            <span class="float-right">
-                <i class="far fa-circle fa-3x"></i>
-            </span>
-        </a>
+    <div class="col-xs-12">
+        <div class="list-group" #list_group>
+            <a
+                active-on-click
+                (click)="onClickCategory('groceries')"
+                class="list-group-item list-group-item-action">
+                <span class="float-left">
+                    <h4 class="list-group-item-text">Groceries</h4>
+                </span>
+                <span class="float-right">
+                    <i class="fas fa-shopping-cart fa-3x"></i>
+                </span>
+            </a>
+            <a
+                active-on-click
+                (click)="onClickCategory('travel')"
+                class="list-group-item list-group-item-action">
+                <span class="float-left">
+                    <h4 class="list-group-item-text">Travel</h4>
+                </span>
+                <span class="float-right">
+                    <i class="fas fa-car fa-3x"></i>
+                </span>
+            </a>
+            <a
+                active-on-click
+                (click)="onClickCategory('meeting')"
+                class="list-group-item list-group-item-action">
+                <span class="float-left">
+                    <h4 class="list-group-item-text">Meeting</h4>
+                </span>
+                <span class="float-right">
+                    <i class="fas fa-users fa-3x"></i>
+                </span>
+            </a>
+            <a
+                active-on-click
+                (click)="onClickCategory('family')"
+                class="list-group-item list-group-item-action">
+                <span class="float-left">
+                    <h4 class="list-group-item-text">Family</h4>
+                </span>
+                <span class="float-right">
+                    <i class="fas fa-child fa-3x"></i>
+                </span>
+            </a>
+            <a
+                active-on-click
+                (click)="onClickCategory('maintinence')"
+                class="list-group-item list-group-item-action">
+                <span class="float-left">
+                    <h4 class="list-group-item-text">Maintinence</h4>
+                </span>
+                <span class="float-right">
+                    <i class="fas fa-home fa-3x"></i>
+                </span>
+            </a>
+            <a
+                active-on-click
+                (click)="onClickCategory('other')"
+                class="list-group-item list-group-item-action">
+                <span class="float-left">
+                    <h4 class="list-group-item-text">Other</h4>
+                </span>
+                <span class="float-right">
+                    <i class="far fa-circle fa-3x"></i>
+                </span>
+            </a>
+            <br>
+            <a
+                [routerLink]="['/todos-create']"
+                class="list-group-item list-group-item-dark">
+                <h4 style="text-align: center;">New Todo</h4>
+            </a>
+        </div>
     </div>
 </div>
