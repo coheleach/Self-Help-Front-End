@@ -19,6 +19,7 @@ import { TodoCompletionStatusComponent } from './to-dos/todo-completion-status/t
 import { ActiveOnClickDirective } from './custom-directives/active-on-click.directive';
 import { TodoCategoryPipe } from './custom-pipes/todo-category.pipe';
 import { TodoCreateComponent } from './to-dos/todo-create/todo-create.component';
+import { CardTitleToggleDirective } from './custom-directives/card-title-toggle.directive';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'todos' },
@@ -38,6 +39,7 @@ const routes: Routes = [
     TodoStatusPipe,
     TodoCompletionStatusComponent,
     ActiveOnClickDirective,
+    CardTitleToggleDirective,
     TodoCategoryPipe,
     TodoCreateComponent
   ],

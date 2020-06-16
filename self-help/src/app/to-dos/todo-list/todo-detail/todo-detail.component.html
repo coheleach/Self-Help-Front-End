@@ -1,17 +1,19 @@
 <div class="row">
     <div class="col-xs-12 col-lg-12">
-        <div class="card text-center" card-body-toggle>
-            <div class="card-header">
+        <div class="card text-center">
+            <div class="card-header" card-title-toggle>
               <h4 class="float-left">{{todo.title}}</h4>
               <span  class="float-right">
                 <i *ngIf="todo.completed" class="fas fa-check-square fa-x5"></i>
                 <p *ngIf="!todo.completed">due by {{todo.deadlineDate | date: 'shortDate'}}</p>
               </span>
             </div>
-            <div class="card-body">
+            <div class="card-body collapse">
               <p class="card-text">{{todo.description}}</p>
+              <a style="color: blue;cursor: pointer" class="card-link">Edit</a>
+              <br>
               <small class="text-muted">Created on {{todo.creationDate | date: 'shortDate'}}</small>
-            </div>
+              </div>
           </div>
     </div>
 </div>
