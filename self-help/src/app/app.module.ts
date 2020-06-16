@@ -24,7 +24,8 @@ import { CardTitleToggleDirective } from './custom-directives/card-title-toggle.
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'todos' },
   { path: 'todos', component: ToDosComponent },
-  { path: 'todos-create', component: TodoCreateComponent, canDeactivate: [TodoCreateGuard]}
+  { path: 'todos-create', component: TodoCreateComponent, canDeactivate: [TodoCreateGuard]},
+  { path: 'todos-create/:index', component: TodoCreateComponent, canActivate: [TodoCreateGuard] }
 ]
 
 @NgModule({

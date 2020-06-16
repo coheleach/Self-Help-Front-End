@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { DeactivationComponent } from 'src/app/guards/deactivation-component';
 import { Todo } from 'src/app/models/Todo.model';
 import { TodoService } from 'src/app/services/todo.service';
+import { ActivatedRoute, Params } from '@angular/router';
 
 @Component({
   selector: 'app-todo-create',
@@ -13,26 +14,30 @@ import { TodoService } from 'src/app/services/todo.service';
 export class TodoCreateComponent implements OnInit, DeactivationComponent {
 
   form: FormGroup;
+  editMode: boolean = false;
+  todoIndex: number;
 
-  constructor(private todoService: TodoService) { }
+  constructor(
+    private todoService: TodoService,
+    private activatedRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
-    
-    this.form = new FormGroup({
-      'title': new FormControl(null, Validators.required),
-      'category': new FormControl('groceries'),
-      'description': new FormControl(null),
-      'deadlineDate': new FormControl(null, [Validators.required, this.invalidTodoDate.bind(this)])
-    })
+    this.activatedRoute.params.subscribe(
+      (params: Params) => {
+        this.editMode = true;
+        this.todoIndex = params['index'];
+      }
+    );
+    this.initializeForm();
   }
 
-  onSubmit() {
+  onSubmit(): void {
     this.todoService.addTodo(
       new Todo(
         this.form.get('title').value,
         this.form.get('description').value,
         this.form.get('category').value,
-        this.form.get('deadlineDate').value,
+        this.form.get('deadlineDate').value
       )
     );
   }
@@ -63,5 +68,27 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
     return true;
   }
   
+  private initializeForm(): void {
+    let title: string = null;
+    let category: string = 'groceries';
+    let description: string = null;
+    let deadlineDate: string = null;
+
+    if(this.editMode) {
+      const todo: Todo = this.todoService.getTodo(this.todoIndex);
+      title = todo.title;
+      category = todo.category;
+      description = todo.description;
+      //use functions to set date as 'YYY-MM-DD'
+      deadlineDate = todo.deadlineDate.toISOString().substr(0,10);
+    }
+    
+    this.form = new FormGroup({
+      'title': new FormControl(title, Validators.required),
+      'category': new FormControl(category),
+      'description': new FormControl(description),
+      'deadlineDate': new FormControl(deadlineDate, [Validators.required, this.invalidTodoDate.bind(this)])
+    });
+  }
 
 }

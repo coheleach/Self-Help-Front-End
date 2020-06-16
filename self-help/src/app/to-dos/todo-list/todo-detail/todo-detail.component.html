@@ -10,7 +10,10 @@
             </div>
             <div class="card-body collapse">
               <p class="card-text">{{todo.description}}</p>
-              <a style="color: blue;cursor: pointer" class="card-link">Edit</a>
+              <a 
+                style="color: blue;cursor: pointer" 
+                class="card-link"
+                [routerLink]="['/todos-create', index]">Edit</a>
               <br>
               <small class="text-muted">Created on {{todo.creationDate | date: 'shortDate'}}</small>
               </div>
