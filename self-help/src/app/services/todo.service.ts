@@ -42,6 +42,10 @@ export class TodoService {
         return this.todos.slice();
     }
 
+    addTodo(newTodo: Todo) {
+        this.todos.push(newTodo);
+    }
+
     setCompletionStatusFilter(status: string) {
         this.completionStatusFilter.next(status);
     }

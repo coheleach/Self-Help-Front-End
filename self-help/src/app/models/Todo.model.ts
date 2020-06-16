@@ -5,11 +5,15 @@ export class Todo {
         public description: string,
         public category: string,
         public deadlineDate: Date,
-        public creationDate: Date,
-        public completed: boolean ) {
+        public creationDate?: Date,
+        public completed?: boolean ) {
         
         if(!creationDate) {
-            creationDate = new Date()
+            this.creationDate = new Date()
+        }
+
+        if(completed == null) {
+            this.completed = false;
         }
     }
         
