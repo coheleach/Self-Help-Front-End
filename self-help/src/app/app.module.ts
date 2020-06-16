@@ -10,6 +10,8 @@ import { TodoTypesComponent } from './to-dos/todo-types/todo-types.component';
 import { TodoListComponent } from './to-dos/todo-list/todo-list.component';
 import { TodoDetailComponent } from './to-dos/todo-list/todo-detail/todo-detail.component';
 
+import { TodoCreateGuard } from './guards/todo-create.guard';
+
 import { CardBodyToggleDirective } from './custom-directives/card-body-toggle.directive';
 
 import { TodoStatusPipe } from './custom-pipes/todo-status.pipe';
@@ -21,7 +23,7 @@ import { TodoCreateComponent } from './to-dos/todo-create/todo-create.component'
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'todos' },
   { path: 'todos', component: ToDosComponent },
-  { path: 'todos-create', component: TodoCreateComponent }
+  { path: 'todos-create', component: TodoCreateComponent, canDeactivate: [TodoCreateGuard]}
 ]
 
 @NgModule({
@@ -45,7 +47,7 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [],
+  providers: [TodoCreateGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

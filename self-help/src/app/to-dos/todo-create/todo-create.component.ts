@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { DeactivationComponent } from 'src/app/guards/deactivation-component';
 
 @Component({
   selector: 'app-todo-create',
   templateUrl: './todo-create.component.html',
   styleUrls: ['./todo-create.component.css']
 })
-export class TodoCreateComponent implements OnInit {
+export class TodoCreateComponent implements OnInit, DeactivationComponent {
 
   form: FormGroup;
 
@@ -23,8 +25,8 @@ export class TodoCreateComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.form.get('deadlineDate').errors);
-    console.log(this.form.get('deadlineDate').touched);
+    // console.log(this.form.get('deadlineDate').errors);
+    // console.log(this.form.get('deadlineDate').touched);
   }
 
   invalidTodoDate(formControl: FormControl): {[key: string]: boolean} {
@@ -38,5 +40,16 @@ export class TodoCreateComponent implements OnInit {
     }
     return null;
   }
+
+  CanDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
+    console.log('invoking can deactivate');
+    if(this.form.get('title').dirty ||
+       this.form.get('description').dirty ||
+       this.form.get('deadLineDate').dirty) {
+      return confirm('discard work and leave page?');
+    }
+    return true;
+  }
+  
 
 }

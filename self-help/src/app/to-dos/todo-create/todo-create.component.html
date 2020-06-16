@@ -54,10 +54,14 @@
                     class="help-block">the date can't be in the past</span>
             </div>
             <br>
-           <button 
-            class="btn btn-primary" 
-            type="submit"
-            >Submit</button>
+            <div class="text-center">
+                <button 
+                    class="btn btn-primary" 
+                    type="submit"
+                    [disabled]="!form.valid"
+                    >Submit
+                </button>
+            </div>
        </form>
     </div>
 </div>
