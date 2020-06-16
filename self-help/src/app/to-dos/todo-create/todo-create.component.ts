@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { DeactivationComponent } from 'src/app/guards/deactivation-component';
+import { Todo } from 'src/app/models/Todo.model';
+import { TodoService } from 'src/app/services/todo.service';
 
 @Component({
   selector: 'app-todo-create',
@@ -12,7 +14,7 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
 
   form: FormGroup;
 
-  constructor() { }
+  constructor(private todoService: TodoService) { }
 
   ngOnInit(): void {
     
@@ -25,8 +27,14 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
   }
 
   onSubmit() {
-    // console.log(this.form.get('deadlineDate').errors);
-    // console.log(this.form.get('deadlineDate').touched);
+    this.todoService.addTodo(
+      new Todo(
+        this.form.get('title').value,
+        this.form.get('description').value,
+        this.form.get('category').value,
+        this.form.get('deadlineDate').value,
+      )
+    );
   }
 
   invalidTodoDate(formControl: FormControl): {[key: string]: boolean} {
@@ -43,9 +51,13 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
 
   CanDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
     console.log('invoking can deactivate');
-    if(this.form.get('title').dirty ||
-       this.form.get('description').dirty ||
-       this.form.get('deadLineDate').dirty) {
+    if(
+        this.form.get('title').value != null 
+        ||
+        this.form.get('description').value != null
+        ||
+        this.form.get('deadlineDate').value != null
+      ) {
       return confirm('discard work and leave page?');
     }
     return true;
