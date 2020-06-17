@@ -50,6 +50,10 @@ export class TodoService {
         this.todos.push(newTodo);
     }
 
+    updateTodo(index: number, todo: Todo) {
+        this.todos[index] = todo;
+    }
+
     setCompletionStatusFilter(status: string) {
         this.completionStatusFilter.next(status);
     }

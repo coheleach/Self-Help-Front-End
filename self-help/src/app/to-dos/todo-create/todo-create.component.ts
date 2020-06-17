@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { DeactivationComponent } from 'src/app/guards/deactivation-component';
 import { Todo } from 'src/app/models/Todo.model';
 import { TodoService } from 'src/app/services/todo.service';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 
 @Component({
   selector: 'app-todo-create',
@@ -19,35 +19,52 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
 
   constructor(
     private todoService: TodoService,
-    private activatedRoute: ActivatedRoute) { }
+    private activatedRoute: ActivatedRoute,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(
       (params: Params) => {
-        this.editMode = true;
         this.todoIndex = params['index'];
+        if(this.todoIndex) {
+          this.editMode = true;
+        }
       }
     );
     this.initializeForm();
   }
 
   onSubmit(): void {
-    this.todoService.addTodo(
-      new Todo(
-        this.form.get('title').value,
-        this.form.get('description').value,
-        this.form.get('category').value,
-        this.form.get('deadlineDate').value
-      )
+    const submittedTodo = new Todo(
+      this.form.get('title').value,
+      this.form.get('description').value,
+      this.form.get('category').value,
+      this.form.get('deadlineDate').value      
     );
+    if(this.editMode) {
+      this.todoService.updateTodo(this.todoIndex ,submittedTodo);
+    } else {
+      this.todoService.addTodo(submittedTodo);
+    }
+    this.router.navigate(['/','todos']);
   }
 
   invalidTodoDate(formControl: FormControl): {[key: string]: boolean} {
     //validate that the date isn't in the past
-    if(formControl.value == null)
-    { return null; }
-    let todoDate = new Date(formControl.value);
+    if(formControl.value == null) { 
+      return null; 
+    }
+    //we instantiate custom Dates of format
+    //YYYY-MM-DD so that we can 
+    //neglect time in the date comparison
+    const todoDate_YearMonthDay = formControl.value.split('-');
+    let todoDate = new Date(
+      todoDate_YearMonthDay[0],
+      (+todoDate_YearMonthDay[1] - 1),
+      todoDate_YearMonthDay[2]
+    );
     let todaysDate = new Date();
+    todaysDate = new Date(todaysDate.getFullYear(), todaysDate.getMonth(), todaysDate.getDate());
     if(todaysDate > todoDate) {
       return { 'historicalDate': true }; 
     }
@@ -55,13 +72,21 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
   }
 
   CanDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
-    console.log('invoking can deactivate');
+    
     if(
-        this.form.get('title').value != null 
-        ||
-        this.form.get('description').value != null
-        ||
-        this.form.get('deadlineDate').value != null
+        (
+          this.form.get('title').value != null 
+          ||
+          this.form.get('description').value != null
+          ||
+          this.form.get('deadlineDate').value != null
+        )
+        &&
+        (
+          !this.editMode
+          &&
+          this.form.invalid
+        )
       ) {
       return confirm('discard work and leave page?');
     }
