@@ -48,10 +48,14 @@
            <div *ngIf="form.get('deadlineDate').touched">
                 <span
                     *ngIf="form.get('deadlineDate').errors && form.get('deadlineDate').errors['required']"
-                    class="help-block">required input</span>
+                    class="help-block"
+                    >required input
+                </span>
                 <span
                     *ngIf="form.get('deadlineDate').errors && form.get('deadlineDate').errors['historicalDate']"
-                    class="help-block">the date can't be in the past</span>
+                    class="help-block"
+                    >the date can't be in the past
+                </span>
             </div>
             <br>
             <div class="text-center">

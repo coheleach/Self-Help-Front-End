@@ -10,11 +10,13 @@
             </div>
             <div class="card-body collapse">
               <p class="card-text">{{todo.description}}</p>
-              <a 
-                style="color: blue;cursor: pointer" 
-                class="card-link"
-                [routerLink]="['/todos-create', index]">Edit</a>
-              <br>
+              <div *ngIf="!todo.completed">
+                <a 
+                  style="color: blue;cursor: pointer" 
+                  class="card-link"
+                  [routerLink]="['/todos-create', index]">Edit</a>
+                <br>
+              </div>
               <small class="text-muted">Created on {{todo.creationDate | date: 'shortDate'}}</small>
               </div>
           </div>

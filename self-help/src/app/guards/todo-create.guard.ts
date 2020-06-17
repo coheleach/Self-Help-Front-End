@@ -17,8 +17,16 @@ export class TodoCreateGuard implements CanDeactivate<DeactivationComponent>, Ca
             
             const todos = this.todoService.getTodos();
             let index = +route.params['index'];
-            if(!isNaN(index)) {
-                return todos[index] != null ? true: false;
+            if(
+                !isNaN(index) 
+                && 
+                //index must correspond to existing todo
+                todos[index] != null 
+                &&
+                //existing todo should only be edited if it's not currently complete
+                !todos[index].completed 
+                ) {
+                return true;
             }
             this.router.navigate(['/'])
             return false;
