@@ -5,6 +5,7 @@ import { DeactivationComponent } from 'src/app/guards/deactivation-component';
 import { Todo } from 'src/app/models/Todo.model';
 import { TodoService } from 'src/app/services/todo.service';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { FormInputToDateService } from 'src/app/helperServices/form-input-to-date.service';
 
 @Component({
   selector: 'app-todo-create',
@@ -19,6 +20,7 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
 
   constructor(
     private todoService: TodoService,
+    private formHelperService: FormInputToDateService,
     private activatedRoute: ActivatedRoute,
     private router: Router) { }
 
@@ -39,7 +41,7 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
       this.form.get('title').value,
       this.form.get('description').value,
       this.form.get('category').value,
-      this.form.get('deadlineDate').value      
+      this.formHelperService.convertISOStringToDate(this.form.get('deadlineDate').value,'-')      
     );
     if(this.editMode) {
       this.todoService.updateTodo(this.todoIndex ,submittedTodo);
@@ -54,17 +56,8 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
     if(formControl.value == null) { 
       return null; 
     }
-    //we instantiate custom Dates of format
-    //YYYY-MM-DD so that we can 
-    //neglect time in the date comparison
-    const todoDate_YearMonthDay = formControl.value.split('-');
-    let todoDate = new Date(
-      todoDate_YearMonthDay[0],
-      (+todoDate_YearMonthDay[1] - 1),
-      todoDate_YearMonthDay[2]
-    );
-    let todaysDate = new Date();
-    todaysDate = new Date(todaysDate.getFullYear(), todaysDate.getMonth(), todaysDate.getDate());
+    let todoDate = this.formHelperService.convertISOStringToDate(formControl.value, '-');
+    let todaysDate = this.formHelperService.clearTimeFromDate(new Date());
     if(todaysDate > todoDate) {
       return { 'historicalDate': true }; 
     }
@@ -100,7 +93,7 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
     let deadlineDate: string = null;
 
     if(this.editMode) {
-      const todo: Todo = this.todoService.getTodo(this.todoIndex);
+      const todo: Todo = this.todoService.getTodo(+this.todoIndex);
       title = todo.title;
       category = todo.category;
       description = todo.description;
