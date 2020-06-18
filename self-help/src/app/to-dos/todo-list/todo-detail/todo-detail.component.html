@@ -10,10 +10,35 @@
             </div>
             <div class="card-body collapse">
               <p class="card-text">{{todo.description}}</p>
-              <a style="color: blue;cursor: pointer" class="card-link">Edit</a>
-              <br>
-              <small class="text-muted">Created on {{todo.creationDate | date: 'shortDate'}}</small>
-              </div>
+                <nav>
+                  <ul class="pagination justify-content-center" style="cursor: pointer;">
+                    <li *ngIf="!todo.completed" class="page-item">
+                      <a 
+                        class="page-link" 
+                        [routerLink]="['/todos-create', index]"
+                        >Edit
+                      </a>
+                    </li>
+                    <li *ngIf="!todo.completed" class="page-item">
+                      <a 
+                        class="page-link"
+                        style="color:#007bff;"
+                        (click)="onComplete()"
+                        >Complete
+                      </a>
+                    </li>
+                    <li class="page-item">
+                      <a 
+                        class="page-link"
+                        style="color:#007bff;"
+                        (click)="onRemove()"
+                        >Remove
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
+                <small class="text-muted">Created on {{todo.creationDate | date: 'shortDate'}}</small>
           </div>
+        </div>
     </div>
 </div>

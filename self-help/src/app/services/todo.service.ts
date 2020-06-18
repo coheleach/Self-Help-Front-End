@@ -1,67 +1,78 @@
 import { Todo } from '../models/Todo.model';
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
+import { FilteredTodoList } from '../models/FilteredTodoList.model';
 
 @Injectable({providedIn: 'root'})
 export class TodoService {
 
-    
-    completionStatusFilter: Subject<string> = new Subject<string>();
-    categoryFilter: Subject<string[]> = new Subject<string[]>();
-    
-    private categoryFilterArray: string[] = [];
+    private filteredTodoList: FilteredTodoList = new FilteredTodoList(
+        [
+            new Todo(
+                'Get Bread',
+                'Pick up a loaf of bread from the grocery store',
+                'groceries',
+                new Date(2019, 6, 9,),
+                new Date(2019,1,1),
+                true
+            ),
+            new Todo(
+                'Pick jeffrey up from Daycare',
+                '',
+                'family',
+                new Date(2020, 12, 1),
+                new Date(2019,2,2),
+                false
+            ),
+            new Todo(
+                'Clear the lawn',
+                'Just the leaves',
+                'maintinence',
+                new Date(2021, 1, 1),
+                new Date(2019,3,3),
+                false
+            )
+        ]
+    );
 
-    private todos: Todo[] = [
-        new Todo(
-            'Get Bread',
-            'Pick up a loaf of bread from the grocery store',
-            'groceries',
-            new Date(2019, 6, 9,),
-            new Date(2019,1,1),
-            true
-        ),
-        new Todo(
-            'Pick jeffrey up from Daycare',
-            '',
-            'family',
-            new Date(2020, 12, 1),
-            new Date(2019,2,2),
-            false
-        ),
-        new Todo(
-            'Clear the lawn',
-            'Just the leaves',
-            'maintinence',
-            new Date(2021, 1, 1),
-            new Date(2019,3,3),
-            false
-        )
-    ];
+    todoListSubject: Subject<Todo[]> = new Subject<Todo[]>();
 
     getTodos(): Todo[] {
-        return this.todos.slice();
+        return this.filteredTodoList.getTodoList();
+    }
+
+    getTodo(index: number): Todo {
+        //This method disregards filters
+        return this.filteredTodoList.getTodo(index);
     }
 
     addTodo(newTodo: Todo) {
-        this.todos.push(newTodo);
+        this.filteredTodoList.addTodo(newTodo);
+        this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
+    }
+
+    updateTodo(index: number, todo: Todo) {
+        this.filteredTodoList.updateTodo(index, todo);
+        this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
+    }
+
+    removeTodoAtIndex(index: number) {
+        this.filteredTodoList.removeTodoAtIndex(index);
+        this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
     }
 
     setCompletionStatusFilter(status: string) {
-        this.completionStatusFilter.next(status);
-    }
-
-    getCategoryFilter(): string[] {
-        return this.categoryFilterArray.slice();
+        this.filteredTodoList.setCompletionStatusFilter(status);
+        this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
     }
 
     setCategoryFilter(category: string[]) {
-        this.categoryFilterArray = category;
-        this.categoryFilter.next(this.categoryFilterArray);
+        this.filteredTodoList.setCategoryFilter(category);
+        this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
     }
 
     clearAllFilters() {
-        this.completionStatusFilter.next('');
-        this.categoryFilterArray = [];
-        this.categoryFilter.next(this.categoryFilterArray);
+        this.filteredTodoList.clearAllFilters();
+        this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
     }
 }
