@@ -56,6 +56,11 @@ export class TodoService {
         this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
     }
 
+    removeTodoAtIndex(index: number) {
+        this.filteredTodoList.removeTodoAtIndex(index);
+        this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
+    }
+
     setCompletionStatusFilter(status: string) {
         this.filteredTodoList.setCompletionStatusFilter(status);
         this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());

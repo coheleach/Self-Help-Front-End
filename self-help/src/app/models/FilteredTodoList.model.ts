@@ -28,6 +28,10 @@ export class FilteredTodoList {
         this.todos[index] = todo;
     }
 
+    removeTodoAtIndex(index: number) {
+        this.todos.splice(index, 1);
+    }
+
     getFilteredTodoList() {
         return this.applyTodoFilters(this.todos);
     }

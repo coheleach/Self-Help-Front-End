@@ -22,4 +22,8 @@ export class TodoDetailComponent implements OnInit {
     this.todoService.updateTodo(this.index, this.todo);
   }
 
+  onRemove(): void {
+    this.todoService.removeTodoAtIndex(this.index);
+  }
+
 }
