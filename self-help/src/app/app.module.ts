@@ -21,6 +21,9 @@ import { TodoCategoryPipe } from './custom-pipes/todo-category.pipe';
 import { TodoCreateComponent } from './to-dos/todo-create/todo-create.component';
 import { CardTitleToggleDirective } from './custom-directives/card-title-toggle.directive';
 
+import { MatSlideToggleModule } from '@angular/material/slide-toggle'
+
+
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'todos' },
   { path: 'todos', component: ToDosComponent },
@@ -48,7 +51,8 @@ const routes: Routes = [
     BrowserModule,
     RouterModule.forRoot(routes),
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatSlideToggleModule
   ],
   providers: [TodoCreateGuard],
   bootstrap: [AppComponent]

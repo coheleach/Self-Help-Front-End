@@ -11,14 +11,32 @@
             <div class="card-body collapse">
               <p class="card-text">{{todo.description}}</p>
               <div *ngIf="!todo.completed">
-                <a 
+                <nav>
+                  <ul class="pagination justify-content-center" style="cursor: pointer;">
+                    <li class="page-item">
+                      <a 
+                        class="page-link" 
+                        [routerLink]="['/todos-create', index]"
+                        >Edit
+                      </a>
+                    </li>
+                    <li class="page-item">
+                      <a 
+                        class="page-link"
+                        (click)="onComplete()">Complete</a>
+                    </li>
+                  </ul>
+                </nav>
+                
+                <!-- <a 
                   style="color: blue;cursor: pointer" 
                   class="card-link"
                   [routerLink]="['/todos-create', index]">Edit</a>
                 <br>
+                <button type="button" class="btn btn-danger">Mark as Complete</button> -->
               </div>
-              <small class="text-muted">Created on {{todo.creationDate | date: 'shortDate'}}</small>
-              </div>
+            <small class="text-muted">Created on {{todo.creationDate | date: 'shortDate'}}</small>
           </div>
+        </div>
     </div>
 </div>
