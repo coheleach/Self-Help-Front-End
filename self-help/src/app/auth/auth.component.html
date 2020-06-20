@@ -33,12 +33,18 @@
                     >Minumum Length 7 Characters
                 </span>
             </div>
-            <div style="text-align: center;">
+            <div>
                 <button 
                     type="submit" 
-                    class="btn btn-primary"
+                    class="btn btn-primary float-left"
                     [disabled]="!form.valid"
-                    >Submit
+                    >{{ this.loginMode ? "Login" : "Sign Up" }}
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-info float-right"
+                    (click)="toggleLoginMode()"
+                    >Switch to {{ this.loginMode ? "Sign Up" : "Login" }}
                 </button>
             </div>
         </form>

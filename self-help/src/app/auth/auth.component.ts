@@ -9,6 +9,7 @@ import { NgForm } from '@angular/forms';
 export class AuthComponent implements OnInit {
 
   @ViewChild('form') form: NgForm;
+  loginMode: boolean = true;
 
   constructor() { }
 
@@ -18,6 +19,10 @@ export class AuthComponent implements OnInit {
 
   onSubmit() {
     console.log(this.form);
+  }
+
+  toggleLoginMode() {
+    this.loginMode = !this.loginMode;
   }
 
 }
