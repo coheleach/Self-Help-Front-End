@@ -21,14 +21,16 @@ import { TodoCategoryPipe } from './custom-pipes/todo-category.pipe';
 import { TodoCreateComponent } from './to-dos/todo-create/todo-create.component';
 import { CardTitleToggleDirective } from './custom-directives/card-title-toggle.directive';
 
-import { MatSlideToggleModule } from '@angular/material/slide-toggle'
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { AuthComponent } from './auth/auth.component'
 
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'todos' },
   { path: 'todos', component: ToDosComponent },
   { path: 'todos-create', component: TodoCreateComponent, canDeactivate: [TodoCreateGuard]},
-  { path: 'todos-create/:index', component: TodoCreateComponent, canActivate: [TodoCreateGuard] }
+  { path: 'todos-create/:index', component: TodoCreateComponent, canActivate: [TodoCreateGuard] },
+  { path: 'authorization', component: AuthComponent }
 ]
 
 @NgModule({
@@ -45,7 +47,8 @@ const routes: Routes = [
     ActiveOnClickDirective,
     CardTitleToggleDirective,
     TodoCategoryPipe,
-    TodoCreateComponent
+    TodoCreateComponent,
+    AuthComponent
   ],
   imports: [
     BrowserModule,
