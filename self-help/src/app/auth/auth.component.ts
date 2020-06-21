@@ -11,6 +11,7 @@ export class AuthComponent implements OnInit {
 
   @ViewChild('form') form: NgForm;
   loginMode: boolean = true;
+  error: string = null;
 
   constructor(private authService: AuthService) { }
 
@@ -24,11 +25,17 @@ export class AuthComponent implements OnInit {
       this.authService.signUp(
         this.form.controls['email'].value,
         this.form.controls['password'].value
+      ).subscribe(
+        response => {this.error = null},
+        error => {this.error = error}
       );
     } else {
       this.authService.signIn(
         this.form.controls['email'].value,
         this.form.controls['password'].value
+      ).subscribe(
+        response => {this.error = null;},
+        error => {this.error = error;}
       );
     }
   }
