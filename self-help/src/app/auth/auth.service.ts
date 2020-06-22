@@ -21,8 +21,12 @@ export class AuthService {
                 password: password,
                 returnSecureToken: true
             }
-        ).pipe(catchError((error: HttpErrorResponse) => {
-            return throwError(this.trySpruceFirebaseError(error));
+        ).pipe(
+            tap((firebaseResponse: FirebaseUserPayload) => {
+                this.signInWithFirebaseUserPayload(firebaseResponse);
+            }
+        ), catchError((error: HttpErrorResponse) => {
+                return throwError(this.trySpruceFirebaseError(error));
         }));
     }
 
@@ -36,37 +40,39 @@ export class AuthService {
             }
         ).pipe(
             tap((firebaseResponse: FirebaseUserPayload) => {
-                const signedInUser = new User(
-                    firebaseResponse.idToken,
-                    firebaseResponse.email,
-                    firebaseResponse.expiresIn,
-                    firebaseResponse.localId
-                );
-                this.user.next(signedInUser);
-        }),
-         catchError((error: HttpErrorResponse) => {
+                this.signInWithFirebaseUserPayload(firebaseResponse);
+            }
+        ), catchError((error: HttpErrorResponse) => {
                 return throwError(this.trySpruceFirebaseError(error));
         }));
     }
 
-    trySpruceFirebaseError(errorResponse: HttpErrorResponse): string {
+    private trySpruceFirebaseError(errorResponse: HttpErrorResponse): string {
         if(!errorResponse.error || !errorResponse.error.error || !errorResponse.error.error.message) {
             //Not expected format. Just pass whatever it is on.
             return errorResponse.message;
         }
-
         switch(errorResponse.error.error.message) {
             case 'EMAIL_NOT_FOUND':
                 return 'Email is not currently registered';
-
             case 'INVALID_PASSWORD':
                 return 'Password not associated with this user email';
- 
             case 'EMAIL_EXISTS':
                 return 'This email has already been registered with a password';
-
+            case 'USER_DISABLED':
+                return 'The user account has been disabled by an administrator';
             default:
                 return errorResponse.error.error.message;
         }
+    }
+
+    private signInWithFirebaseUserPayload(firebaseUserPayload: FirebaseUserPayload): void {
+        const signedInUser = new User(
+            firebaseUserPayload.idToken,
+            firebaseUserPayload.email,
+            firebaseUserPayload.expiresIn,
+            firebaseUserPayload.localId
+        );
+        this.user.next(signedInUser);       
     }
 }
