@@ -1,23 +1,25 @@
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http'
 import { Injectable } from '@angular/core';
-import { map, catchError } from 'rxjs/operators';
-import { Observable, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { throwError, BehaviorSubject } from 'rxjs';
+import { User } from '../models/User.model';
+import { FirebaseUserPayload } from '../models/firebase-user-payload';
+
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
     
+    user: BehaviorSubject<User> = new BehaviorSubject<User>(null);
+
     constructor(private httpClient: HttpClient) {}
 
     signUp(email: string, password: string) {
-        return this.httpClient.post<HttpResponse<any>>(
+        return this.httpClient.post<FirebaseUserPayload>(
             'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBomaslk7POZJLJfcQwoJ0jGwGFB7B5Fhc',
             {
-                'email': email,
-                'password': password,
-                'returnTokenSecure': true
-            },
-            {
-                observe: 'response'
+                email: email,
+                password: password,
+                returnSecureToken: true
             }
         ).pipe(catchError((error: HttpErrorResponse) => {
             return throwError(this.trySpruceFirebaseError(error));
@@ -25,18 +27,25 @@ export class AuthService {
     }
 
     signIn(email: string, password: string) {
-        return this.httpClient.post<HttpResponse<any>>(
+        return this.httpClient.post<FirebaseUserPayload>(
             'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBomaslk7POZJLJfcQwoJ0jGwGFB7B5Fhc',
             {
-                'email': email,
-                'password': password,
-                'returnTokenSecure': true
-            },
-            {
-                observe: 'body'
+                email: email,
+                password: password,
+                returnSecureToken: true
             }
-        ).pipe(catchError((error: HttpErrorResponse) => {
-            return throwError(this.trySpruceFirebaseError(error));
+        ).pipe(
+            tap((firebaseResponse: FirebaseUserPayload) => {
+                const signedInUser = new User(
+                    firebaseResponse.idToken,
+                    firebaseResponse.email,
+                    firebaseResponse.expiresIn,
+                    firebaseResponse.localId
+                );
+                this.user.next(signedInUser);
+        }),
+         catchError((error: HttpErrorResponse) => {
+                return throwError(this.trySpruceFirebaseError(error));
         }));
     }
 
