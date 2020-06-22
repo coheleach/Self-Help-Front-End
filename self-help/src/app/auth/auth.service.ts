@@ -4,6 +4,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { throwError, BehaviorSubject } from 'rxjs';
 import { User } from '../models/User.model';
 import { FirebaseUserPayload } from '../models/firebase-user-payload';
+import { Router } from '@angular/router';
 
 
 @Injectable({providedIn: 'root'})
@@ -11,7 +12,7 @@ export class AuthService {
     
     user: BehaviorSubject<User> = new BehaviorSubject<User>(null);
 
-    constructor(private httpClient: HttpClient) {}
+    constructor(private httpClient: HttpClient, private router: Router) {}
 
     signUp(email: string, password: string) {
         return this.httpClient.post<FirebaseUserPayload>(
@@ -47,6 +48,11 @@ export class AuthService {
         }));
     }
 
+    signOut() {
+        this.user.next(null);
+        this.router.navigate(['/authorization']);
+    }
+
     private trySpruceFirebaseError(errorResponse: HttpErrorResponse): string {
         if(!errorResponse.error || !errorResponse.error.error || !errorResponse.error.error.message) {
             //Not expected format. Just pass whatever it is on.
@@ -73,6 +79,7 @@ export class AuthService {
             firebaseUserPayload.expiresIn,
             firebaseUserPayload.localId
         );
-        this.user.next(signedInUser);       
+        this.user.next(signedInUser);
+        this.router.navigate(['/todos']);       
     }
 }
