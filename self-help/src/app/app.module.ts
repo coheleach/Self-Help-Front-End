@@ -19,14 +19,14 @@ import { CardTitleToggleDirective } from './custom-directives/card-title-toggle.
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { AuthComponent } from './auth/auth.component'
 import { HttpClientModule } from '@angular/common/http';
-import { AuthGuard } from './auth/auth.guard';
+import { AuthGuard } from './guards/auth.guard';
 
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'todos' },
   { path: 'todos', component: ToDosComponent, canActivate: [AuthGuard] },
   { path: 'todos-create', component: TodoCreateComponent, canActivate: [AuthGuard], canDeactivate: [TodoCreateGuard]},
-  { path: 'todos-create/:index', component: TodoCreateComponent, canActivate: [TodoCreateGuard, AuthGuard] },
+  { path: 'todos-create/:index', component: TodoCreateComponent, canActivate: [AuthGuard, TodoCreateGuard] },
   { path: 'authorization', component: AuthComponent }
 ]
 

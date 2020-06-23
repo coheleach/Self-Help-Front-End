@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 export class AuthService {
     
     user: BehaviorSubject<User> = new BehaviorSubject<User>(null);
+    signOutTimer: any;
 
     constructor(private httpClient: HttpClient, private router: Router) {}
 
@@ -50,8 +51,35 @@ export class AuthService {
 
     signOut() {
         this.user.next(null);
+        localStorage.removeItem('user');
         this.router.navigate(['/authorization']);
     }
+
+    tryAutoSignIn() {
+        const lastUserData = JSON.parse(localStorage.getItem('user'));
+        if(lastUserData) {
+            const lastUser: User = new User(
+                lastUserData['idToken'],
+                lastUserData['email'],
+                new Date(lastUserData['expirationDateTime']),
+                lastUserData['localId']
+            );
+
+            if(lastUser.expirationDateTime > new Date()) {
+                this.user.next(lastUser);
+                this.prepareUserAutoSignOut(lastUser);
+            }
+        }
+    }
+
+    prepareUserAutoSignOut(user: User) {
+        const millisecondsToSignOut = (user.expirationDateTime.getTime() - new Date().getTime());
+        console.log('logging user out in seconds: ' + millisecondsToSignOut / 1000);
+        this.signOutTimer = setTimeout(() => {
+            console.log('invoking signOut()');
+            this.signOut();
+        }, millisecondsToSignOut);
+    }    
 
     private trySpruceFirebaseError(errorResponse: HttpErrorResponse): string {
         if(!errorResponse.error || !errorResponse.error.error || !errorResponse.error.error.message) {
@@ -76,10 +104,21 @@ export class AuthService {
         const signedInUser = new User(
             firebaseUserPayload.idToken,
             firebaseUserPayload.email,
-            firebaseUserPayload.expiresIn,
+            this.dateTimePlusSeconds(firebaseUserPayload.expiresIn),
             firebaseUserPayload.localId
         );
         this.user.next(signedInUser);
-        this.router.navigate(['/todos']);       
+        console.log(signedInUser);
+        this.prepareUserAutoSignOut(signedInUser);
+        //store user info in local storage
+        localStorage.setItem('user', JSON.stringify(signedInUser));
+        this.router.navigate(['/todos']);
+    }
+
+    private dateTimePlusSeconds(seconds: string): Date {
+        const numSeconds = +seconds;
+        let date = new Date();
+        date.setSeconds(new Date().getSeconds() + numSeconds);
+        return date;
     }
 }
