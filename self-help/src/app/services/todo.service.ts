@@ -2,40 +2,22 @@ import { Todo } from '../models/Todo.model';
 import { Injectable } from '@angular/core';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { FilteredTodoList } from '../models/FilteredTodoList.model';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({providedIn: 'root'})
 export class TodoService {
 
-    private filteredTodoList: FilteredTodoList = new FilteredTodoList(
-        [
-            new Todo(
-                'Get Bread',
-                'Pick up a loaf of bread from the grocery store',
-                'groceries',
-                new Date(2019, 6, 9,),
-                new Date(2019,1,1),
-                true
-            ),
-            new Todo(
-                'Pick jeffrey up from Daycare',
-                '',
-                'family',
-                new Date(2020, 12, 1),
-                new Date(2019,2,2),
-                false
-            ),
-            new Todo(
-                'Clear the lawn',
-                'Just the leaves',
-                'maintinence',
-                new Date(2021, 1, 1),
-                new Date(2019,3,3),
-                false
-            )
-        ]
-    );
+    private filteredTodoList: FilteredTodoList = new FilteredTodoList();
 
     todoListSubject: Subject<Todo[]> = new Subject<Todo[]>();
+
+    constructor(private authService: AuthService) {
+        authService.user.subscribe(user => {
+            if(!user) {
+                this.removeAllTodos();
+            }
+        })
+    }
 
     getTodos(): Todo[] {
         return this.filteredTodoList.getTodoList();
@@ -56,8 +38,18 @@ export class TodoService {
         this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
     }
 
+    updateTodos(todos: Todo[]) {
+        this.filteredTodoList.updateTodos(todos);
+        this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
+    }
+
     removeTodoAtIndex(index: number) {
         this.filteredTodoList.removeTodoAtIndex(index);
+        this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
+    }
+
+    removeAllTodos() {
+        this.filteredTodoList.removeAllTodos();
         this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
     }
 

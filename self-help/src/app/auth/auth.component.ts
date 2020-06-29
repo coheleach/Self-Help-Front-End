@@ -3,6 +3,8 @@ import { NgForm } from '@angular/forms';
 import { AuthService } from './auth.service';
 import { User } from '../models/User.model';
 import { Subscription } from 'rxjs';
+import { FirebaseStorageService } from '../services/firebase-storage.service';
+import { Todo } from '../models/Todo.model';
 
 @Component({
   selector: 'app-auth',
@@ -16,7 +18,8 @@ export class AuthComponent implements OnInit, OnDestroy {
   loginMode: boolean = true;
   error: string = null;
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService,
+    private firebaseStorageService: FirebaseStorageService) { }
 
   ngOnInit(): void {
     this.subscription = this.authService.user.subscribe((user: User) => {
@@ -47,6 +50,16 @@ export class AuthComponent implements OnInit, OnDestroy {
       ).subscribe(
         response => {
           this.error = null;
+
+          this.firebaseStorageService.getAllUsersTodos().subscribe(
+            response => {
+              console.log(response);
+            }, error => {
+              console.log(error);
+            }
+          ); 
+
+
         },error => {
           this.error = error;
           console.log(error);

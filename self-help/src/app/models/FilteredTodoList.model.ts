@@ -13,6 +13,9 @@ export class FilteredTodoList {
     }
     
     getTodoList(): Todo[] {
+        if(!this.todos) {
+            return null;
+        }
         return this.todos.slice();
     }
 
@@ -28,8 +31,22 @@ export class FilteredTodoList {
         this.todos[index] = todo;
     }
 
+    updateTodos(todos: Todo[]) {
+        this.todos = todos;
+    }
+
     removeTodoAtIndex(index: number) {
+        if(!this.todos) {
+            return null;
+        }
         this.todos.splice(index, 1);
+    }
+
+    removeAllTodos() {
+        if(!this.todos || this.todos.length == 0) {
+            return;
+        }
+        this.todos.splice(0,this.todos.length);
     }
 
     getFilteredTodoList() {
