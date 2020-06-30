@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { FilteredTodoList } from '../models/FilteredTodoList.model';
 import { AuthService } from '../auth/auth.service';
+import { FirebaseStorageService } from './firebase-storage.service';
 
 @Injectable({providedIn: 'root'})
 export class TodoService {
@@ -11,10 +12,14 @@ export class TodoService {
 
     todoListSubject: Subject<Todo[]> = new Subject<Todo[]>();
 
-    constructor(private authService: AuthService) {
+    constructor(private authService: AuthService, private firebaseStorageService: FirebaseStorageService) {
         authService.user.subscribe(user => {
             if(!user) {
                 this.removeAllTodos();
+            } else {
+                this.firebaseStorageService.getAllUsersTodos().subscribe((todoList: Todo[]) => {
+                    this.updateTodos(todoList);
+                });
             }
         })
     }

@@ -50,16 +50,6 @@ export class AuthComponent implements OnInit, OnDestroy {
       ).subscribe(
         response => {
           this.error = null;
-
-          this.firebaseStorageService.getAllUsersTodos().subscribe(
-            response => {
-              console.log(response);
-            }, error => {
-              console.log(error);
-            }
-          ); 
-
-
         },error => {
           this.error = error;
           console.log(error);

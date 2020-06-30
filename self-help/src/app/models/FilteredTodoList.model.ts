@@ -4,7 +4,7 @@ export class FilteredTodoList {
 
     private todos: Todo[] = [];
     private completionStatusFilter: string = '';
-    private categoryFilter: string[];
+    private categoryFilter: string[] = [];
 
     constructor(todos?: Todo[]) {
         if(this.todos) {

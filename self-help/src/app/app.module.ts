@@ -26,7 +26,7 @@ const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'todos' },
   { path: 'todos', component: ToDosComponent, canActivate: [AuthGuard] },
   { path: 'todos-create', component: TodoCreateComponent, canActivate: [AuthGuard], canDeactivate: [TodoCreateGuard]},
-  { path: 'todos-create/:index', component: TodoCreateComponent, canActivate: [AuthGuard, TodoCreateGuard] },
+  { path: 'todos-create/:index', component: TodoCreateComponent, canActivate: [AuthGuard, TodoCreateGuard]},
   { path: 'authorization', component: AuthComponent }
 ]
 

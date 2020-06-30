@@ -13,8 +13,7 @@ export class FirebaseStorageService {
 
     constructor(
         private httpClient: HttpClient, 
-        private authService: AuthService,
-        private todoService: TodoService) {}
+        private authService: AuthService) {}
 
     storeTodos(todos: Todo[]): Observable<any> {
         let requestPayload = todos.map((todo: Todo) => {{
@@ -45,7 +44,7 @@ export class FirebaseStorageService {
         );
     }
 
-    getAllUsersTodos(): Observable<any> {
+    getAllUsersTodos(): Observable<Todo[]> {
         return this.httpClient.get(
             'https://ng-self-help.firebaseio.com/todos.json',
             {
@@ -70,8 +69,6 @@ export class FirebaseStorageService {
                         );
                     });
                 }
-            }), tap((todoArray: Todo[]) => {
-                this.todoService.updateTodos(todoArray);
-        }));
+            }));
     }
 }

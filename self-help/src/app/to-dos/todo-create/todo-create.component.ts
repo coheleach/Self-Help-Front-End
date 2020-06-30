@@ -64,6 +64,21 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
     return null;
   }
 
+  invalidCategory(formControl: FormControl): {[key: string]: boolean} {
+    const acceptableValues = [
+      'groceries',
+      'travel',
+      'meeting',
+      'family',
+      'maintinence',
+      'other'
+    ];
+    if(acceptableValues.indexOf(formControl.value) == -1) {
+      return { 'invalid-category': true };
+    }
+    return null;
+  }
+
   CanDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
     
     if(
@@ -103,7 +118,7 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
     
     this.form = new FormGroup({
       'title': new FormControl(title, Validators.required),
-      'category': new FormControl(category),
+      'category': new FormControl(category, [this.invalidCategory.bind(this)]),
       'description': new FormControl(description),
       'deadlineDate': new FormControl(deadlineDate, [Validators.required, this.invalidTodoDate.bind(this)])
     });
