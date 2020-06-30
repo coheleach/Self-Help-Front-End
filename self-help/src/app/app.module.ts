@@ -20,13 +20,14 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { AuthComponent } from './auth/auth.component'
 import { HttpClientModule } from '@angular/common/http';
 import { AuthGuard } from './guards/auth.guard';
+import { TodoListResolver } from './resolvers/todo-list-resolver.service';
 
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'todos' },
-  { path: 'todos', component: ToDosComponent, canActivate: [AuthGuard] },
+  { path: 'todos', component: ToDosComponent, canActivate: [AuthGuard], resolve: [TodoListResolver] },
   { path: 'todos-create', component: TodoCreateComponent, canActivate: [AuthGuard], canDeactivate: [TodoCreateGuard]},
-  { path: 'todos-create/:index', component: TodoCreateComponent, canActivate: [AuthGuard, TodoCreateGuard]},
+  { path: 'todos-create/:index', component: TodoCreateComponent, canActivate: [AuthGuard, TodoCreateGuard], resolve: [TodoListResolver]},
   { path: 'authorization', component: AuthComponent }
 ]
 

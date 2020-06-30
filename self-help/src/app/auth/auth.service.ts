@@ -5,6 +5,7 @@ import { throwError, BehaviorSubject, Subject } from 'rxjs';
 import { User } from '../models/User.model';
 import { FirebaseUserPayload } from '../models/firebase-user-payload';
 import { Router } from '@angular/router';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 
 @Injectable({providedIn: 'root'})
@@ -34,6 +35,7 @@ export class AuthService {
     }
 
     signIn(email: string, password: string) {
+        this.AutoSignedIn = false;
         return this.httpClient.post<FirebaseUserPayload>(
             'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBomaslk7POZJLJfcQwoJ0jGwGFB7B5Fhc',
             {

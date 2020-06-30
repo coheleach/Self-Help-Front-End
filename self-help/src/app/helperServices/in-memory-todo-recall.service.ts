@@ -15,7 +15,14 @@ export class InMemoryTodoRecallService {
     fetchTodosFromLocalStorage(): Todo[] {
         const stringList = JSON.parse(localStorage.getItem('todoList'));
         let todoArray: Todo[] = stringList.map(stringTodo => {
-            JSON.parse(stringTodo);
+            return new Todo(
+                stringTodo['title'],
+                stringTodo['description'],
+                stringTodo['category'],
+                new Date(stringTodo['deadlineDate']),
+                new Date(stringTodo['creationDate']),
+                stringTodo['completed']
+            );
         });
         return todoArray;
     }

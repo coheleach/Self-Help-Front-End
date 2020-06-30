@@ -1,6 +1,6 @@
 import { Todo } from '../models/Todo.model';
 import { Injectable } from '@angular/core';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { Subject, BehaviorSubject, Subscription } from 'rxjs';
 import { FilteredTodoList } from '../models/FilteredTodoList.model';
 import { AuthService } from '../auth/auth.service';
 import { FirebaseStorageService } from './firebase-storage.service';
@@ -12,6 +12,7 @@ export class TodoService {
     private filteredTodoList: FilteredTodoList = new FilteredTodoList();
 
     todoListSubject: Subject<Todo[]> = new Subject<Todo[]>();
+    resolvingTodosSubscription: Subscription;
 
     constructor(private authService: AuthService, 
                 private firebaseStorageService: FirebaseStorageService,
@@ -20,7 +21,8 @@ export class TodoService {
             if(!user) {
                 this.removeAllTodos();
             } else {
-                this.firebaseStorageService.getAllUsersTodos().subscribe((todoList: Todo[]) => {
+                this.resolvingTodosSubscription = this.firebaseStorageService.getAllUsersTodos().subscribe(
+                (todoList: Todo[]) => {
                     this.updateTodos(todoList);
                 });
             }
@@ -51,7 +53,6 @@ export class TodoService {
     updateTodos(todos: Todo[]) {
         this.filteredTodoList.updateTodos(todos);
         this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
-        this.logChangeInLocalStorage();
     }
 
     removeTodoAtIndex(index: number) {
@@ -63,7 +64,6 @@ export class TodoService {
     removeAllTodos() {
         this.filteredTodoList.removeAllTodos();
         this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
-        this.logChangeInLocalStorage()
     }
 
     setCompletionStatusFilter(status: string) {
@@ -81,6 +81,8 @@ export class TodoService {
         this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
     }
 
+    //only call below method on crud operations
+    //triggered by the user.
     private logChangeInLocalStorage() {
         this.inMemoryTodoRecallService.logUnsavedEdit();
         this.inMemoryTodoRecallService.logTodosInLocalStorage(this.getTodos());
