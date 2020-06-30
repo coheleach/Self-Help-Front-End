@@ -43,10 +43,7 @@ export class FilteredTodoList {
     }
 
     removeAllTodos() {
-        if(!this.todos || this.todos.length == 0) {
-            return;
-        }
-        this.todos.splice(0,this.todos.length);
+        this.todos = [];
     }
 
     getFilteredTodoList() {

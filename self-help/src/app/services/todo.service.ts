@@ -4,6 +4,7 @@ import { Subject, BehaviorSubject } from 'rxjs';
 import { FilteredTodoList } from '../models/FilteredTodoList.model';
 import { AuthService } from '../auth/auth.service';
 import { FirebaseStorageService } from './firebase-storage.service';
+import { InMemoryTodoRecallService } from '../helperServices/in-memory-todo-recall.service';
 
 @Injectable({providedIn: 'root'})
 export class TodoService {
@@ -12,7 +13,9 @@ export class TodoService {
 
     todoListSubject: Subject<Todo[]> = new Subject<Todo[]>();
 
-    constructor(private authService: AuthService, private firebaseStorageService: FirebaseStorageService) {
+    constructor(private authService: AuthService, 
+                private firebaseStorageService: FirebaseStorageService,
+                private inMemoryTodoRecallService: InMemoryTodoRecallService) {
         authService.user.subscribe(user => {
             if(!user) {
                 this.removeAllTodos();
@@ -36,26 +39,31 @@ export class TodoService {
     addTodo(newTodo: Todo) {
         this.filteredTodoList.addTodo(newTodo);
         this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
+        this.logChangeInLocalStorage();
     }
 
     updateTodo(index: number, todo: Todo) {
         this.filteredTodoList.updateTodo(index, todo);
         this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
+        this.logChangeInLocalStorage();
     }
 
     updateTodos(todos: Todo[]) {
         this.filteredTodoList.updateTodos(todos);
         this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
+        this.logChangeInLocalStorage();
     }
 
     removeTodoAtIndex(index: number) {
         this.filteredTodoList.removeTodoAtIndex(index);
         this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
+        this.logChangeInLocalStorage();
     }
 
     removeAllTodos() {
         this.filteredTodoList.removeAllTodos();
         this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
+        this.logChangeInLocalStorage()
     }
 
     setCompletionStatusFilter(status: string) {
@@ -71,5 +79,10 @@ export class TodoService {
     clearAllFilters() {
         this.filteredTodoList.clearAllFilters();
         this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
+    }
+
+    private logChangeInLocalStorage() {
+        this.inMemoryTodoRecallService.logUnsavedEdit();
+        this.inMemoryTodoRecallService.logTodosInLocalStorage(this.getTodos());
     }
 }

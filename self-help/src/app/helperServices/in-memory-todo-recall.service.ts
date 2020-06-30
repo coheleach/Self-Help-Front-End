@@ -5,8 +5,9 @@ import { AuthService } from '../auth/auth.service';
 import { TodoComparerService } from './todo-comparer.service';
 
 @Injectable({providedIn: 'root'})
-export class InMemoryRecallService {
+export class InMemoryTodoRecallService {
     
+
     logTodosInLocalStorage(todoList: Todo[]) {
         localStorage.setItem('todoList', JSON.stringify(todoList));
     }
@@ -15,7 +16,7 @@ export class InMemoryRecallService {
         const stringList = JSON.parse(localStorage.getItem('todoList'));
         let todoArray: Todo[] = stringList.map(stringTodo => {
             JSON.parse(stringTodo);
-        })
+        });
         return todoArray;
     }
 

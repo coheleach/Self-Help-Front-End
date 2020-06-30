@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http'
 import { Injectable } from '@angular/core';
 import { catchError, tap } from 'rxjs/operators';
-import { throwError, BehaviorSubject } from 'rxjs';
+import { throwError, BehaviorSubject, Subject } from 'rxjs';
 import { User } from '../models/User.model';
 import { FirebaseUserPayload } from '../models/firebase-user-payload';
 import { Router } from '@angular/router';
@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 @Injectable({providedIn: 'root'})
 export class AuthService {
     
+    AutoSignedIn: boolean = false;
     user: BehaviorSubject<User> = new BehaviorSubject<User>(null);
     signOutTimer: any;
 
@@ -51,7 +52,8 @@ export class AuthService {
 
     signOut() {
         this.user.next(null);
-        localStorage.removeItem('user');
+        localStorage.clear();
+        this.AutoSignedIn = false;
         this.router.navigate(['/authorization']);
     }
 
@@ -68,6 +70,7 @@ export class AuthService {
             if(lastUser.expirationDateTime > new Date()) {
                 this.user.next(lastUser);
                 this.prepareUserAutoSignOut(lastUser);
+                this.AutoSignedIn = true;
             }
         }
     }
