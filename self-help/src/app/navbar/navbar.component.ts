@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { Router } from '@angular/router';
 import { InMemoryTodoRecallService } from '../helperServices/in-memory-todo-recall.service';
+import { TodoService } from '../services/todo.service';
 
 @Component({
   selector: 'app-navbar',
@@ -17,7 +18,8 @@ export class NavbarComponent implements OnInit {
   constructor(
     private authService: AuthService, 
     private router: Router,
-    private inMemoryTodoRecallService: InMemoryTodoRecallService) { }
+    private inMemoryTodoRecallService: InMemoryTodoRecallService,
+    private todoService: TodoService) { }
 
   ngOnInit(): void {
     this.authService.user.subscribe((user: User) => {
@@ -37,11 +39,11 @@ export class NavbarComponent implements OnInit {
   }
 
   onUndoChanges() {
-    //...?
+    this.todoService.revertToLastSavedTodos();
   }
 
   onSaveChanges() {
-    //...?
+    this.todoService.saveTodoListChanges();
   }
 
 }

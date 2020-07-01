@@ -1,11 +1,10 @@
 import { Todo } from '../models/Todo.model';
 import { Injectable } from '@angular/core';
-import { Subject, BehaviorSubject, Subscription, Observable, observable } from 'rxjs';
+import { Subject} from 'rxjs';
 import { FilteredTodoList } from '../models/FilteredTodoList.model';
 import { AuthService } from '../auth/auth.service';
 import { FirebaseStorageService } from './firebase-storage.service';
 import { InMemoryTodoRecallService } from '../helperServices/in-memory-todo-recall.service';
-import { map } from 'rxjs/operators';
 
 @Injectable({providedIn: 'root'})
 export class TodoService {
@@ -74,9 +73,26 @@ export class TodoService {
         this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
     }
 
+    revertToLastSavedTodos() {
+        this.firebaseStorageService.getAllUsersTodos().subscribe(
+            (todoList: Todo[]) => {
+                this.updateTodos(todoList);
+                this.inMemoryTodoRecallService.removeTodosInLocalStorage();
+            }
+        )
+    }
+
+    saveTodoListChanges() {
+        this.firebaseStorageService.putUsersTodos(
+            this.inMemoryTodoRecallService.fetchTodosFromLocalStorage()
+        ).subscribe(response => {console.log(response);});
+    }
+
     //only call below method on crud operations
     //triggered by the user.
     private logChangeInLocalStorage() {
-        this.inMemoryTodoRecallService.logTodosInLocalStorage(this.getTodos());
+        this.inMemoryTodoRecallService.logTodosInLocalStorage(
+            this.getTodos()
+        );
     }
 }

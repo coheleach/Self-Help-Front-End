@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { Todo } from '../models/Todo.model';
 import { Observable } from 'rxjs';
-import { map, tap, catchError } from 'rxjs/operators';
+import { map, tap, catchError, flatMap } from 'rxjs/operators';
 import { TodoService } from './todo.service';
 import { TypeofExpr } from '@angular/compiler';
 import { element } from 'protractor';
@@ -70,5 +70,33 @@ export class FirebaseStorageService {
                     });
                 }
             }));
+    }
+
+    putUsersTodos(todoList: Todo[]): Observable<any> {      
+        return this.httpClient.get(
+            'https://ng-self-help.firebaseio.com/todos.json',
+            {
+                params: {
+                    orderBy: '"user"',
+                    equalTo: '"' + this.authService.user.value.email + '"'
+                },
+                observe: 'body'
+            }
+        ).pipe<string>(map(userNode => {
+            console.log('get usernode fired');
+            for(let property in userNode) 
+            {
+                //userNode should have one property
+                //and that is the key
+                return property;
+            }
+        })
+        ).pipe(flatMap((userNodeKey: string) => {
+            const patchUrl = 'https://ng-self-help.firebaseio.com/todos/' + userNodeKey + '/todos.json';
+            return this.httpClient.put(
+            patchUrl,
+            todoList
+        );
+        }));
     }
 }

@@ -118,6 +118,7 @@ export class AuthService {
         this.prepareUserAutoSignOut(signedInUser);
         //store user info in local storage
         localStorage.setItem('user', JSON.stringify(signedInUser));
+        
         this.router.navigate(['/todos']);
     }
 

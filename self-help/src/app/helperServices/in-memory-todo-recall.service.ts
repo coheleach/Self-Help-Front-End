@@ -12,6 +12,10 @@ export class InMemoryTodoRecallService {
         localStorage.setItem('todoList', JSON.stringify(todoList));
     }
 
+    removeTodosInLocalStorage() {
+        localStorage.removeItem('todoList');
+    }
+
     fetchTodosFromLocalStorage(): Todo[] {
         if(!localStorage.getItem('todoList')) {
             return null;
