@@ -6,12 +6,14 @@ import { User } from '../models/User.model';
 import { FirebaseUserPayload } from '../models/firebase-user-payload';
 import { Router } from '@angular/router';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { SignInMethod } from '../enums/sign-in-method.enum';
 
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
     
-    AutoSignedIn: boolean = false;
+    signInMethod: SignInMethod = SignInMethod.none;
+    
     user: BehaviorSubject<User> = new BehaviorSubject<User>(null);
     signOutTimer: any;
 
@@ -35,7 +37,7 @@ export class AuthService {
     }
 
     signIn(email: string, password: string) {
-        this.AutoSignedIn = false;
+        this.signInMethod = SignInMethod.manual;
         return this.httpClient.post<FirebaseUserPayload>(
             'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBomaslk7POZJLJfcQwoJ0jGwGFB7B5Fhc',
             {
@@ -53,9 +55,9 @@ export class AuthService {
     }
 
     signOut() {
+        this.signInMethod = SignInMethod.none;
         this.user.next(null);
         localStorage.clear();
-        this.AutoSignedIn = false;
         this.router.navigate(['/authorization']);
     }
 
@@ -70,9 +72,9 @@ export class AuthService {
             );
 
             if(lastUser.expirationDateTime > new Date()) {
+                this.signInMethod = SignInMethod.auto;
                 this.user.next(lastUser);
                 this.prepareUserAutoSignOut(lastUser);
-                this.AutoSignedIn = true;
             }
         }
     }
@@ -113,7 +115,6 @@ export class AuthService {
             firebaseUserPayload.localId
         );
         this.user.next(signedInUser);
-        console.log(signedInUser);
         this.prepareUserAutoSignOut(signedInUser);
         //store user info in local storage
         localStorage.setItem('user', JSON.stringify(signedInUser));

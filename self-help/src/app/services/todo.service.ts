@@ -1,10 +1,11 @@
 import { Todo } from '../models/Todo.model';
 import { Injectable } from '@angular/core';
-import { Subject, BehaviorSubject, Subscription } from 'rxjs';
+import { Subject, BehaviorSubject, Subscription, Observable, observable } from 'rxjs';
 import { FilteredTodoList } from '../models/FilteredTodoList.model';
 import { AuthService } from '../auth/auth.service';
 import { FirebaseStorageService } from './firebase-storage.service';
 import { InMemoryTodoRecallService } from '../helperServices/in-memory-todo-recall.service';
+import { map } from 'rxjs/operators';
 
 @Injectable({providedIn: 'root'})
 export class TodoService {
@@ -12,22 +13,11 @@ export class TodoService {
     private filteredTodoList: FilteredTodoList = new FilteredTodoList();
 
     todoListSubject: Subject<Todo[]> = new Subject<Todo[]>();
-    resolvingTodosSubscription: Subscription;
+    firebaseRetrievalObservable: Observable<Todo[]>;
 
     constructor(private authService: AuthService, 
                 private firebaseStorageService: FirebaseStorageService,
-                private inMemoryTodoRecallService: InMemoryTodoRecallService) {
-        authService.user.subscribe(user => {
-            if(!user) {
-                this.removeAllTodos();
-            } else {
-                this.resolvingTodosSubscription = this.firebaseStorageService.getAllUsersTodos().subscribe(
-                (todoList: Todo[]) => {
-                    this.updateTodos(todoList);
-                });
-            }
-        })
-    }
+                private inMemoryTodoRecallService: InMemoryTodoRecallService) { }
 
     getTodos(): Todo[] {
         return this.filteredTodoList.getTodoList();
@@ -53,6 +43,7 @@ export class TodoService {
     updateTodos(todos: Todo[]) {
         this.filteredTodoList.updateTodos(todos);
         this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
+        // this.logChangeInLocalStorage();
     }
 
     removeTodoAtIndex(index: number) {

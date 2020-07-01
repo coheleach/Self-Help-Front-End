@@ -6,36 +6,50 @@ import { AuthService } from '../auth/auth.service';
 import { InMemoryTodoRecallService } from '../helperServices/in-memory-todo-recall.service';
 import { TodoComparerService } from '../helperServices/todo-comparer.service';
 import { Todo } from '../models/Todo.model';
-import { map } from 'rxjs/operators';
+import { map, exhaustMap, tap, take } from 'rxjs/operators';
+import { FirebaseStorageService } from '../services/firebase-storage.service';
+import { userInfo } from 'os';
+import { SignInMethod } from '../enums/sign-in-method.enum';
 
 @Injectable({providedIn: 'root'})
 export class TodoListResolver implements Resolve<Todo[]> {
     
-    constructor(
-        private todoService: TodoService, 
+    constructor( 
         private authService: AuthService, 
-        private inMemoryTodoRecallService: InMemoryTodoRecallService) { }
+        private todoService: TodoService,
+        private inMemoryTodoRecallService: InMemoryTodoRecallService,
+        private firebaseDataService: FirebaseStorageService) { }
 
     resolve(
         route: ActivatedRouteSnapshot, 
         state: RouterStateSnapshot): Observable<Todo[]> | Promise<Todo[]> | Todo[] {
+            
+            switch(this.authService.signInMethod) {
+                case SignInMethod.none:
+                    return null;
+                case SignInMethod.manual:
+                    return this.getStoredTodos();
+                case SignInMethod.auto:
+                    return this.tryGetLastLoggedChanges();
+                default:
+                    return null;
+            }
+    }
 
-        const localStorageTodos = this.inMemoryTodoRecallService.fetchTodosFromLocalStorage();
+    private getStoredTodos(): Observable<Todo[]> {
 
-        //CASE 1: User Todos are being loaded in through firebase
-        //Use these once they are loaded
-        if(!this.todoService.resolvingTodosSubscription.closed) {
-            return this.todoService.todoListSubject.pipe(map((todoList: Todo[]) => {
-                if(this.authService.AutoSignedIn) {
-                    if(!TodoComparerService.todoArraysAreTheSame(todoList, localStorageTodos)) {
-                        this.todoService.updateTodos(localStorageTodos);
-                        return this.inMemoryTodoRecallService.fetchTodosFromLocalStorage();
-                    } else {
-                        todoList;
-                    }
-                }
-            }));
+        return this.firebaseDataService.getAllUsersTodos().pipe(
+            tap((todoList: Todo[]) => {
+                this.todoService.updateTodos(todoList);
+            }) );
+    }
+
+    private tryGetLastLoggedChanges() : Observable<Todo[]> | Todo[] {
+        const localStorageTodos: Todo[] = this.inMemoryTodoRecallService.fetchTodosFromLocalStorage();
+        if(!localStorageTodos) {
+            return this.getStoredTodos();
         }
-        return this.todoService.getTodos();
+        this.todoService.updateTodos(localStorageTodos);
+        return localStorageTodos;
     }
 }

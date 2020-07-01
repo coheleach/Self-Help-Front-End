@@ -13,6 +13,9 @@ export class InMemoryTodoRecallService {
     }
 
     fetchTodosFromLocalStorage(): Todo[] {
+        if(!localStorage.getItem('todoList')) {
+            return null;
+        }
         const stringList = JSON.parse(localStorage.getItem('todoList'));
         let todoArray: Todo[] = stringList.map(stringTodo => {
             return new Todo(

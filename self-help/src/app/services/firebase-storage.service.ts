@@ -55,7 +55,7 @@ export class FirebaseStorageService {
                 observe: 'body',
             }
         )
-        .pipe(map(responseBody => {
+        .pipe<Todo[]>(map(responseBody => {
                 for(const property in responseBody) {
                     return responseBody[property].todos.map(allStringTodo => {
                         //Must convert stringified datetimes to datetimes
