@@ -26,52 +26,5 @@ export class TodoListComponent implements OnInit {
         this.todos = todoList;
       }
     )
-
-    // this.todos = this.todoService.getTodos();
-    // this.todoService.todoList.subscribe((todoList: Todo[]) => {
-    //   this.todos = todoList;
-    // })
-
-    // this.todoService.categoryFilter.subscribe((categories: string[]) => {
-    //   this.categoryFilter = categories;
-    //   this.todos = this.applyTodoFilters(this.todoService.getTodos());
-    // },
-    // error => {
-    //   alert('[Error{ [component: TodoList, source: todoService.categoryFilter.subscribe(...): ] }');
-    //   console.log(error);
-    // });
-    
   }
-
-  // applyTodoFilters(todos: Todo[]): Todo[] {
-  //   todos = this.applyCategoryFilter(todos);
-  //   todos = this.applyCompletionStatusFilter(todos);
-  //   return todos;
-  // }
-
-  // private applyCategoryFilter(todos: Todo[]): Todo[] {
-  //   let filteredArray: Todo[] = [];
-  //   if(this.categoryFilter.length == 0) {
-  //     return todos;
-  //   }
-  //   for(let todo of todos) {
-  //     if(this.categoryFilter.includes(todo.category)) {
-  //       filteredArray.push(todo);
-  //     }
-  //   }
-  //   return filteredArray;
-  // }
-
-  // private applyCompletionStatusFilter(todos: Todo[]): Todo[] {
-  //   let filteredArray: Todo[] = [];
-  //   if(this.completionStatusFilter == '') {
-  //     return todos;
-  //   }
-  //   for(let todo of todos) {
-  //     if(String(todo.completed) == this.completionStatusFilter) {
-  //       filteredArray.push(todo);
-  //     }
-  //   }
-  //   return filteredArray;
-  // }
 }

@@ -1,6 +1,6 @@
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { TodoService } from '../services/todo.service';
 import { AuthService } from '../auth/auth.service';
 import { InMemoryTodoRecallService } from '../helperServices/in-memory-todo-recall.service';
@@ -28,9 +28,11 @@ export class TodoListResolver implements Resolve<Todo[]> {
                 case SignInMethod.none:
                     return null;
                 case SignInMethod.manual:
-                    return this.getStoredTodos();
+                    return this.tryGetLastLoggedChanges();
                 case SignInMethod.auto:
                     return this.tryGetLastLoggedChanges();
+                case SignInMethod.signUp:
+                    return this.scaffoldNewUserStorage();
                 default:
                     return null;
             }
@@ -51,5 +53,12 @@ export class TodoListResolver implements Resolve<Todo[]> {
         }
         this.todoService.updateTodos(localStorageTodos);
         return localStorageTodos;
+    }
+
+    private scaffoldNewUserStorage(): Todo[] {
+        const emptyTodoList: Todo[] = [];
+        this.firebaseDataService.storeTodos(emptyTodoList).subscribe();
+        this.todoService.updateTodos(emptyTodoList);
+        return emptyTodoList;
     }
 }

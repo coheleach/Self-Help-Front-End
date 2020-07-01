@@ -13,11 +13,10 @@ export class TodoService {
     private filteredTodoList: FilteredTodoList = new FilteredTodoList();
 
     todoListSubject: Subject<Todo[]> = new Subject<Todo[]>();
-    firebaseRetrievalObservable: Observable<Todo[]>;
 
     constructor(private authService: AuthService, 
                 private firebaseStorageService: FirebaseStorageService,
-                private inMemoryTodoRecallService: InMemoryTodoRecallService) { }
+                private inMemoryTodoRecallService: InMemoryTodoRecallService) {}
 
     getTodos(): Todo[] {
         return this.filteredTodoList.getTodoList();
@@ -26,6 +25,10 @@ export class TodoService {
     getTodo(index: number): Todo {
         //This method disregards filters
         return this.filteredTodoList.getTodo(index);
+    }
+
+    getTodoIndex(soughtTodo: Todo): number {
+        return this.filteredTodoList.getTodoList().indexOf(soughtTodo);
     }
 
     addTodo(newTodo: Todo) {
@@ -43,7 +46,6 @@ export class TodoService {
     updateTodos(todos: Todo[]) {
         this.filteredTodoList.updateTodos(todos);
         this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
-        // this.logChangeInLocalStorage();
     }
 
     removeTodoAtIndex(index: number) {
@@ -75,7 +77,6 @@ export class TodoService {
     //only call below method on crud operations
     //triggered by the user.
     private logChangeInLocalStorage() {
-        this.inMemoryTodoRecallService.logUnsavedEdit();
         this.inMemoryTodoRecallService.logTodosInLocalStorage(this.getTodos());
     }
 }

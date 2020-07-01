@@ -30,14 +30,6 @@ export class InMemoryTodoRecallService {
         return todoArray;
     }
 
-    logUnsavedEdit() {
-        localStorage.setItem('unsavedEdit', 'true');
-    }
-
-    logSavedEdits() {
-        localStorage.setItem('unsavedEdit', 'false');
-    }
-
     isTodoListSameAsStorageList(todoList: Todo[]): boolean {
         return(TodoComparerService.todoArraysAreTheSame(
             this.fetchTodosFromLocalStorage(),
