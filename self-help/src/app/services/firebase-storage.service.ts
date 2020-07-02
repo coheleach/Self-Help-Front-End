@@ -15,20 +15,10 @@ export class FirebaseStorageService {
         private httpClient: HttpClient, 
         private authService: AuthService) {}
 
-    storeTodos(todos: Todo[]): Observable<any> {
-        let requestPayload = todos.map((todo: Todo) => {{
-            return {...todo, user: this.authService.user.value.email};
-        }});
-
-        // let requestPayload = [
-        //     new Todo('title1', 'desc1', 'cat1', new Date(), new Date(), false),
-        //     new Todo('title2', 'desc2', 'cat2', new Date(), new Date(), false),
-        //     new Todo('title3', 'desc3', 'cat3', new Date(), new Date(), false)
-        // ];
-        
+    postUserTodoListNode(todoList: Todo[]): Observable<any> {
         return this.httpClient.post(
             "https://ng-self-help.firebaseio.com/todos.json",
-            { user: this.authService.user.value.email, todos: requestPayload},
+            { user: this.authService.user.value.email, todos: todoList},
             {
                 observe: 'response'
             }
@@ -91,6 +81,9 @@ export class FirebaseStorageService {
                 return property;
             }
         })
+        //use flatmap operator so subscribing caller
+        //gets the result of the put request instead
+        //of the prior get request
         ).pipe(flatMap((userNodeKey: string) => {
             const patchUrl = 'https://ng-self-help.firebaseio.com/todos/' + userNodeKey + '/todos.json';
             return this.httpClient.put(

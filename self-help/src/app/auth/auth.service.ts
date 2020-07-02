@@ -20,6 +20,7 @@ export class AuthService {
     constructor(private httpClient: HttpClient, private router: Router) {}
 
     signUp(email: string, password: string) {
+        this.signInMethod = SignInMethod.signUp;
         return this.httpClient.post<FirebaseUserPayload>(
             'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBomaslk7POZJLJfcQwoJ0jGwGFB7B5Fhc',
             {

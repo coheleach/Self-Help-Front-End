@@ -85,7 +85,13 @@ export class TodoService {
     saveTodoListChanges() {
         this.firebaseStorageService.putUsersTodos(
             this.inMemoryTodoRecallService.fetchTodosFromLocalStorage()
-        ).subscribe(response => {console.log(response);});
+        ).subscribe(response => {
+            console.log(response);
+            this.inMemoryTodoRecallService.removeTodosInLocalStorage();
+        }, error => {
+            alert('unable to save todo list');
+            console.log(error);
+        });
     }
 
     //only call below method on crud operations

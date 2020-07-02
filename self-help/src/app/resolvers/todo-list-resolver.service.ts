@@ -57,8 +57,14 @@ export class TodoListResolver implements Resolve<Todo[]> {
 
     private scaffoldNewUserStorage(): Todo[] {
         const emptyTodoList: Todo[] = [];
-        this.firebaseDataService.storeTodos(emptyTodoList).subscribe();
+        this.firebaseDataService.postUserTodoListNode(emptyTodoList).subscribe(response => {
+            console.log(response);
+        }, error => {
+            alert('error creating storage space for new user... signing out');
+            this.authService.signOut();
+        });
         this.todoService.updateTodos(emptyTodoList);
+        this.authService.signInMethod = SignInMethod.manual;
         return emptyTodoList;
     }
 }
