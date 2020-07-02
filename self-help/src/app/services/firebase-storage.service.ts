@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { Todo } from '../models/Todo.model';
@@ -42,24 +42,25 @@ export class FirebaseStorageService {
                     orderBy: '"user"',
                     equalTo: '"' + this.authService.user.value.email + '"'
                 },
-                observe: 'body',
+                observe: 'response',
             }
         )
-        .pipe<Todo[]>(map(responseBody => {
-                for(const property in responseBody) {
-                    return responseBody[property].todos.map(allStringTodo => {
-                        //Must convert stringified datetimes to datetimes
-                        return new Todo(
-                            allStringTodo['title'],
-                            allStringTodo['description'],
-                            allStringTodo['category'],
-                            new Date(allStringTodo['deadlineDate']),
-                            new Date(allStringTodo['creationDate']),
-                            allStringTodo['completed']
-                        );
-                    });
-                }
-            }));
+        .pipe<Todo[]>(map((response: HttpResponse<any>) => {
+            let responseBody = response['body'];
+            for(const property in responseBody) {
+                return responseBody[property].todos.map(allStringTodo => {
+                    //Must convert stringified datetimes to datetimes
+                    return new Todo(
+                        allStringTodo['title'],
+                        allStringTodo['description'],
+                        allStringTodo['category'],
+                        new Date(allStringTodo['deadlineDate']),
+                        new Date(allStringTodo['creationDate']),
+                        allStringTodo['completed']
+                    );
+                });
+            }
+        }));
     }
 
     putUsersTodos(todoList: Todo[]): Observable<any> {      

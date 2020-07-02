@@ -6,7 +6,7 @@ import { AuthService } from '../auth/auth.service';
 import { InMemoryTodoRecallService } from '../helperServices/in-memory-todo-recall.service';
 import { TodoComparerService } from '../helperServices/todo-comparer.service';
 import { Todo } from '../models/Todo.model';
-import { map, exhaustMap, tap, take } from 'rxjs/operators';
+import { map, exhaustMap, tap, take, flatMap } from 'rxjs/operators';
 import { FirebaseStorageService } from '../services/firebase-storage.service';
 import { userInfo } from 'os';
 import { SignInMethod } from '../enums/sign-in-method.enum';
@@ -43,7 +43,13 @@ export class TodoListResolver implements Resolve<Todo[]> {
         return this.firebaseDataService.getAllUsersTodos().pipe(
             tap((todoList: Todo[]) => {
                 this.todoService.updateTodos(todoList);
-            }) );
+            }),
+            error => {
+                alert('error accessing user data...');
+                console.log(error);
+                this.authService.signOut();
+                return null;
+            });
     }
 
     private tryGetLastLoggedChanges() : Observable<Todo[]> | Todo[] {
@@ -55,16 +61,18 @@ export class TodoListResolver implements Resolve<Todo[]> {
         return localStorageTodos;
     }
 
-    private scaffoldNewUserStorage(): Todo[] {
+    private scaffoldNewUserStorage(): Todo[] | Observable<Todo[]> {
         const emptyTodoList: Todo[] = [];
-        this.firebaseDataService.postUserTodoListNode(emptyTodoList).subscribe(response => {
+        return this.firebaseDataService.postUserTodoListNode(emptyTodoList).pipe(flatMap(response => {
             console.log(response);
-        }, error => {
-            alert('error creating storage space for new user... signing out');
+            this.todoService.updateTodos(emptyTodoList);
+            this.authService.signInMethod = SignInMethod.manual;
+            return emptyTodoList;
+        }), error => {
+            alert('error creating storage space for new user... removing new account');
+            this.authService.deleteUserAccount().subscribe();
             this.authService.signOut();
+            return null;
         });
-        this.todoService.updateTodos(emptyTodoList);
-        this.authService.signInMethod = SignInMethod.manual;
-        return emptyTodoList;
     }
 }

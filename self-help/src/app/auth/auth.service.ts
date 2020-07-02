@@ -19,6 +19,15 @@ export class AuthService {
 
     constructor(private httpClient: HttpClient, private router: Router) {}
 
+    deleteUserAccount() {
+        return this.httpClient.post(
+            'https://identitytoolkit.googleapis.com/v1/accounts:delete?key=AIzaSyBomaslk7POZJLJfcQwoJ0jGwGFB7B5Fhc',
+            {
+                idToken: this.user.value.idToken
+            }
+        );
+    }
+    
     signUp(email: string, password: string) {
         this.signInMethod = SignInMethod.signUp;
         return this.httpClient.post<FirebaseUserPayload>(
@@ -87,7 +96,7 @@ export class AuthService {
             console.log('invoking signOut()');
             this.signOut();
         }, millisecondsToSignOut);
-    }    
+    }
 
     private trySpruceFirebaseError(errorResponse: HttpErrorResponse): string {
         if(!errorResponse.error || !errorResponse.error.error || !errorResponse.error.error.message) {

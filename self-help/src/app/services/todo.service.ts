@@ -2,7 +2,6 @@ import { Todo } from '../models/Todo.model';
 import { Injectable } from '@angular/core';
 import { Subject} from 'rxjs';
 import { FilteredTodoList } from '../models/FilteredTodoList.model';
-import { AuthService } from '../auth/auth.service';
 import { FirebaseStorageService } from './firebase-storage.service';
 import { InMemoryTodoRecallService } from '../helperServices/in-memory-todo-recall.service';
 
@@ -13,8 +12,7 @@ export class TodoService {
 
     todoListSubject: Subject<Todo[]> = new Subject<Todo[]>();
 
-    constructor(private authService: AuthService, 
-                private firebaseStorageService: FirebaseStorageService,
+    constructor(private firebaseStorageService: FirebaseStorageService,
                 private inMemoryTodoRecallService: InMemoryTodoRecallService) {}
 
     getTodos(): Todo[] {
