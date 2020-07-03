@@ -48,14 +48,19 @@ export class TodoListResolver implements Resolve<Todo[]> {
                 alert('error accessing user data...');
                 console.log(error);
                 this.authService.signOut();
-                return null;
+                return error;
             });
     }
 
     private tryGetLastLoggedChanges() : Observable<Todo[]> | Todo[] {
         const localStorageTodos: Todo[] = this.inMemoryTodoRecallService.fetchTodosFromLocalStorage();
+        let storedTodos: Todo[] = null;
         if(!localStorageTodos) {
-            return this.getStoredTodos();
+            this.getStoredTodos().subscribe(todoList => {
+                console.log(todoList);
+                storedTodos = todoList;
+            });
+            return storedTodos;
         }
         this.todoService.updateTodos(localStorageTodos);
         return localStorageTodos;

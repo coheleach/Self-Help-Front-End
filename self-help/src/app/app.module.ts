@@ -18,9 +18,10 @@ import { TodoCreateComponent } from './to-dos/todo-create/todo-create.component'
 import { CardTitleToggleDirective } from './custom-directives/card-title-toggle.directive';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { AuthComponent } from './auth/auth.component'
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthGuard } from './guards/auth.guard';
 import { TodoListResolver } from './resolvers/todo-list-resolver.service';
+import { FirebaseInterceptorService } from './interceptors/firebase-interceptor.service';
 
 
 const routes: Routes = [
@@ -56,7 +57,14 @@ const routes: Routes = [
     MatSlideToggleModule,
     HttpClientModule
   ],
-  providers: [TodoCreateGuard],
+  providers: [
+    TodoCreateGuard,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: FirebaseInterceptorService,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

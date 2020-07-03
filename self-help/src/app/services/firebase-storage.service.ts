@@ -1,9 +1,9 @@
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { Todo } from '../models/Todo.model';
 import { Observable } from 'rxjs';
-import { map, tap, catchError, flatMap } from 'rxjs/operators';
+import { map, tap, catchError, flatMap, exhaustMap } from 'rxjs/operators';
 import { TodoService } from './todo.service';
 import { TypeofExpr } from '@angular/compiler';
 import { element } from 'protractor';
@@ -34,7 +34,7 @@ export class FirebaseStorageService {
         );
     }
 
-    getAllUsersTodos(): Observable<Todo[]> {
+    getAllUsersTodos(): Observable<any> {
         return this.httpClient.get(
             'https://ng-self-help.firebaseio.com/todos.json',
             {
@@ -44,8 +44,13 @@ export class FirebaseStorageService {
                 },
                 observe: 'response',
             }
+            ///////////////////////////////////
+            //BUG INTERCEPTOR NOT APPLYING  ///
+            //USER CREDENTIALS.  UNTIL FIXED///
+            //MUST PLACE IN MANUALLY        ///
+            ///////////////////////////////////
         )
-        .pipe<Todo[]>(map((response: HttpResponse<any>) => {
+        .pipe(exhaustMap((response: HttpResponse<any>) => {
             let responseBody = response['body'];
             for(const property in responseBody) {
                 return responseBody[property].todos.map(allStringTodo => {
