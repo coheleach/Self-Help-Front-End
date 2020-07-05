@@ -14,14 +14,15 @@ export class FirebaseInterceptorService implements HttpInterceptor {
         req: HttpRequest<any>, 
         next: HttpHandler)
         : Observable<HttpEvent<any>> {
-            return this.authService.user.pipe(take(1), exhaustMap(user => {
-                if(user != null) {
-                    const alteredRequest: HttpRequest<any> = req.clone({setHeaders: {
-                        auth: this.authService.user.value.idToken
-                    }});
-                    return next.handle(alteredRequest);
-                }
-                return next.handle(req);
-            }));
+            // return this.authService.user.pipe(take(1), exhaustMap(user => {
+            //     if(user != null) {
+            //         const alteredRequest: HttpRequest<any> = req.clone({setHeaders: {
+            //             auth: this.authService.user.value.idToken
+            //         }});
+            //         return next.handle(alteredRequest);
+            //     }
+            //     return next.handle(req);
+            // }));
+            return next.handle(req);
     }
 }

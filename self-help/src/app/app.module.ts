@@ -22,14 +22,16 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthGuard } from './guards/auth.guard';
 import { TodoListResolver } from './resolvers/todo-list-resolver.service';
 import { FirebaseInterceptorService } from './interceptors/firebase-interceptor.service';
+import { SingleButtonTestComponent } from './testing-directory/single-button-test/single-button-test.component';
 
 
 const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'todos' },
+  { path: '', pathMatch: 'full', redirectTo: 'authorization' },
   { path: 'todos', component: ToDosComponent, canActivate: [AuthGuard], resolve: [TodoListResolver] },
   { path: 'todos-create', component: TodoCreateComponent, canActivate: [AuthGuard], canDeactivate: [TodoCreateGuard]},
   { path: 'todos-create/:index', component: TodoCreateComponent, canActivate: [AuthGuard, TodoCreateGuard], resolve: [TodoListResolver]},
-  { path: 'authorization', component: AuthComponent }
+  { path: 'authorization', component: AuthComponent },
+  { path: 'testing', component: SingleButtonTestComponent}
 ]
 
 @NgModule({
@@ -47,7 +49,8 @@ const routes: Routes = [
     CardTitleToggleDirective,
     TodoCategoryPipe,
     TodoCreateComponent,
-    AuthComponent
+    AuthComponent,
+    SingleButtonTestComponent
   ],
   imports: [
     BrowserModule,

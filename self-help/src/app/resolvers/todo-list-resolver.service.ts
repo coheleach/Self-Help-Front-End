@@ -6,7 +6,7 @@ import { AuthService } from '../auth/auth.service';
 import { InMemoryTodoRecallService } from '../helperServices/in-memory-todo-recall.service';
 import { TodoComparerService } from '../helperServices/todo-comparer.service';
 import { Todo } from '../models/Todo.model';
-import { map, exhaustMap, tap, take, flatMap } from 'rxjs/operators';
+import { map, exhaustMap, tap, take, flatMap, switchMap, exhaust } from 'rxjs/operators';
 import { FirebaseStorageService } from '../services/firebase-storage.service';
 import { userInfo } from 'os';
 import { SignInMethod } from '../enums/sign-in-method.enum';
@@ -38,32 +38,21 @@ export class TodoListResolver implements Resolve<Todo[]> {
             }
     }
 
-    private getStoredTodos(): Observable<Todo[]> {
-
-        return this.firebaseDataService.getAllUsersTodos().pipe(
-            tap((todoList: Todo[]) => {
-                this.todoService.updateTodos(todoList);
-            }),
-            error => {
-                alert('error accessing user data...');
-                console.log(error);
-                this.authService.signOut();
-                return error;
-            });
-    }
-
     private tryGetLastLoggedChanges() : Observable<Todo[]> | Todo[] {
+        
         const localStorageTodos: Todo[] = this.inMemoryTodoRecallService.fetchTodosFromLocalStorage();
-        let storedTodos: Todo[] = null;
-        if(!localStorageTodos) {
-            this.getStoredTodos().subscribe(todoList => {
-                console.log(todoList);
-                storedTodos = todoList;
-            });
-            return storedTodos;
+        if(localStorageTodos) {
+            this.todoService.updateTodos(localStorageTodos);
+            return localStorageTodos;
         }
-        this.todoService.updateTodos(localStorageTodos);
-        return localStorageTodos;
+        this.firebaseDataService.getAllUsersTodos().subscribe(
+            (todoList: Todo[]) => {
+                this.todoService.updateTodos(todoList);
+            },
+            error => {
+                alert('encountered an error retrieving user todos');
+            }
+        );
     }
 
     private scaffoldNewUserStorage(): Todo[] | Observable<Todo[]> {

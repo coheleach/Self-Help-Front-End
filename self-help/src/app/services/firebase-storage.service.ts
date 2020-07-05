@@ -3,10 +3,11 @@ import { Injectable } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { Todo } from '../models/Todo.model';
 import { Observable } from 'rxjs';
-import { map, tap, catchError, flatMap, exhaustMap } from 'rxjs/operators';
+import { map, tap, catchError, flatMap, exhaustMap, exhaust } from 'rxjs/operators';
 import { TodoService } from './todo.service';
 import { TypeofExpr } from '@angular/compiler';
 import { element } from 'protractor';
+import { TodoListComponent } from '../to-dos/todo-list/todo-list.component';
 
 @Injectable({providedIn: 'root'})
 export class FirebaseStorageService {
@@ -34,8 +35,8 @@ export class FirebaseStorageService {
         );
     }
 
-    getAllUsersTodos(): Observable<any> {
-        return this.httpClient.get(
+    getAllUsersTodos(): Observable<Todo[]> {
+        return this.httpClient.get<HttpResponse<any>>(
             'https://ng-self-help.firebaseio.com/todos.json',
             {
                 params: {
@@ -44,27 +45,26 @@ export class FirebaseStorageService {
                 },
                 observe: 'response',
             }
-            ///////////////////////////////////
-            //BUG INTERCEPTOR NOT APPLYING  ///
-            //USER CREDENTIALS.  UNTIL FIXED///
-            //MUST PLACE IN MANUALLY        ///
-            ///////////////////////////////////
         )
-        .pipe(exhaustMap((response: HttpResponse<any>) => {
+        .pipe<Todo[]>(
+            map((response: HttpResponse<any>) => {
+            console.log(response);
+            let todoArray: Todo[] = [];
             let responseBody = response['body'];
-            for(const property in responseBody) {
-                return responseBody[property].todos.map(allStringTodo => {
+            for(let property in responseBody) {
+                for(let allStringTodo of responseBody[property].todos) {// responseBody[property].todos.map(allStringTodo => {
                     //Must convert stringified datetimes to datetimes
-                    return new Todo(
+                    todoArray.push( new Todo(
                         allStringTodo['title'],
                         allStringTodo['description'],
                         allStringTodo['category'],
                         new Date(allStringTodo['deadlineDate']),
                         new Date(allStringTodo['creationDate']),
                         allStringTodo['completed']
-                    );
-                });
+                    ));
+                }
             }
+            return todoArray;
         }));
     }
 
@@ -78,8 +78,7 @@ export class FirebaseStorageService {
                 },
                 observe: 'body'
             }
-        ).pipe<string>(map(userNode => {
-            console.log('get usernode fired');
+        ).pipe<string>(exhaustMap(userNode => {
             for(let property in userNode) 
             {
                 //userNode should have one property
@@ -87,10 +86,7 @@ export class FirebaseStorageService {
                 return property;
             }
         })
-        //use flatmap operator so subscribing caller
-        //gets the result of the put request instead
-        //of the prior get request
-        ).pipe(flatMap((userNodeKey: string) => {
+        ).pipe(exhaustMap((userNodeKey: string) => {
             const patchUrl = 'https://ng-self-help.firebaseio.com/todos/' + userNodeKey + '/todos.json';
             return this.httpClient.put(
             patchUrl,
