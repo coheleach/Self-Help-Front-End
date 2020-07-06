@@ -4,7 +4,7 @@ export class FilteredTodoList {
 
     private todos: Todo[] = [];
     private completionStatusFilter: string = '';
-    private categoryFilter: string[];
+    private categoryFilter: string[] = [];
 
     constructor(todos?: Todo[]) {
         if(this.todos) {
@@ -13,6 +13,9 @@ export class FilteredTodoList {
     }
     
     getTodoList(): Todo[] {
+        if(!this.todos) {
+            return null;
+        }
         return this.todos.slice();
     }
 
@@ -28,8 +31,19 @@ export class FilteredTodoList {
         this.todos[index] = todo;
     }
 
+    updateTodos(todos: Todo[]) {
+        this.todos = todos;
+    }
+
     removeTodoAtIndex(index: number) {
+        if(!this.todos) {
+            return null;
+        }
         this.todos.splice(index, 1);
+    }
+
+    removeAllTodos() {
+        this.todos = [];
     }
 
     getFilteredTodoList() {

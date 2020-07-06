@@ -10,7 +10,7 @@
                     formControlName="title">
             </div>
             <span
-                *ngIf="!form.get('title').valid && form.get('title').touched"
+                *ngIf="!form.get('title').valid && (form.get('title').touched || editMode)"
                 class="help-block"
                 >required input
             </span>
@@ -45,7 +45,7 @@
                     placeholder="DD/MM/YYYY"
                     formControlName="deadlineDate">
            </div>
-           <div *ngIf="form.get('deadlineDate').touched">
+           <div *ngIf="form.get('deadlineDate').touched || editMode">
                 <span
                     *ngIf="form.get('deadlineDate').errors && form.get('deadlineDate').errors['required']"
                     class="help-block"
