@@ -52,16 +52,18 @@ export class FirebaseStorageService {
             let todoArray: Todo[] = [];
             let responseBody = response['body'];
             for(let property in responseBody) {
-                for(let allStringTodo of responseBody[property].todos) {// responseBody[property].todos.map(allStringTodo => {
-                    //Must convert stringified datetimes to datetimes
-                    todoArray.push( new Todo(
-                        allStringTodo['title'],
-                        allStringTodo['description'],
-                        allStringTodo['category'],
-                        new Date(allStringTodo['deadlineDate']),
-                        new Date(allStringTodo['creationDate']),
-                        allStringTodo['completed']
-                    ));
+                if(responseBody.todos) {
+                    for(let allStringTodo of responseBody[property].todos) {// responseBody[property].todos.map(allStringTodo => {
+                        //Must convert stringified datetimes to datetimes
+                        todoArray.push( new Todo(
+                            allStringTodo['title'],
+                            allStringTodo['description'],
+                            allStringTodo['category'],
+                            new Date(allStringTodo['deadlineDate']),
+                            new Date(allStringTodo['creationDate']),
+                            allStringTodo['completed']
+                        ));
+                    }
                 }
             }
             return todoArray;
@@ -78,20 +80,19 @@ export class FirebaseStorageService {
                 },
                 observe: 'body'
             }
-        ).pipe<string>(exhaustMap(userNode => {
+        ).pipe(exhaustMap(userNode => {
             for(let property in userNode) 
             {
+                console.log(userNode);
+                console.log(property);
                 //userNode should have one property
                 //and that is the key
-                return property;
+                const patchUrl = 'https://ng-self-help.firebaseio.com/todos/' + property + '/todos.json';
+                return this.httpClient.put(
+                patchUrl,
+                todoList
+                );
             }
-        })
-        ).pipe(exhaustMap((userNodeKey: string) => {
-            const patchUrl = 'https://ng-self-help.firebaseio.com/todos/' + userNodeKey + '/todos.json';
-            return this.httpClient.put(
-            patchUrl,
-            todoList
-        );
         }));
     }
 }

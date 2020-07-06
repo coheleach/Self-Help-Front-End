@@ -1,6 +1,6 @@
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, empty } from 'rxjs';
 import { TodoService } from '../services/todo.service';
 import { AuthService } from '../auth/auth.service';
 import { InMemoryTodoRecallService } from '../helperServices/in-memory-todo-recall.service';
@@ -56,17 +56,30 @@ export class TodoListResolver implements Resolve<Todo[]> {
     }
 
     private scaffoldNewUserStorage(): Todo[] | Observable<Todo[]> {
-        const emptyTodoList: Todo[] = [];
-        return this.firebaseDataService.postUserTodoListNode(emptyTodoList).pipe(flatMap(response => {
-            console.log(response);
-            this.todoService.updateTodos(emptyTodoList);
-            this.authService.signInMethod = SignInMethod.manual;
-            return emptyTodoList;
-        }), error => {
-            alert('error creating storage space for new user... removing new account');
-            this.authService.deleteUserAccount().subscribe();
-            this.authService.signOut();
-            return null;
-        });
+        
+        let emptyTodoList: Todo[] = [];
+        this.firebaseDataService.postUserTodoListNode(emptyTodoList).subscribe(
+            (response) => {
+                this.todoService.updateTodos(emptyTodoList);
+                this.authService.signInMethod = SignInMethod.manual;
+            },
+            (error) => {
+                alert('error creating storage space for new user... removing new account');
+                this.authService.deleteUserAccount().subscribe();
+                this.authService.signOut();
+            });
+        return emptyTodoList;
+        
+        // return this.firebaseDataService.postUserTodoListNode(emptyTodoList).pipe(flatMap(response => {
+        //     console.log(response);
+        //     this.todoService.updateTodos(emptyTodoList);
+        //     this.authService.signInMethod = SignInMethod.manual;
+        //     return emptyTodoList;
+        // }), error => {
+        //     alert('error creating storage space for new user... removing new account');
+        //     this.authService.deleteUserAccount().subscribe();
+        //     this.authService.signOut();
+        //     return null;
+        // });
     }
 }

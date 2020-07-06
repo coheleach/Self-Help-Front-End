@@ -16,7 +16,7 @@ export class FirebaseInterceptorService implements HttpInterceptor {
         : Observable<HttpEvent<any>> {
             return this.authService.user.pipe(take(1), exhaustMap(user => {
                 if(user != null) {
-                    const alteredRequest = req.clone({params: new HttpParams().set('auth',user.idToken)});
+                    const alteredRequest = req.clone({params: req.params.append('auth',user.idToken)});
                     return next.handle(alteredRequest);
                 }
                 return next.handle(req);
