@@ -51,8 +51,9 @@ export class FirebaseStorageService {
             console.log(response);
             let todoArray: Todo[] = [];
             let responseBody = response['body'];
+            console.log(responseBody);
             for(let property in responseBody) {
-                if(responseBody.todos) {
+                if(responseBody[property].todos) {
                     for(let allStringTodo of responseBody[property].todos) {// responseBody[property].todos.map(allStringTodo => {
                         //Must convert stringified datetimes to datetimes
                         todoArray.push( new Todo(
