@@ -19,14 +19,14 @@ export class TodoService {
         return this.filteredTodoList.getTodoList();
     }
 
-    getTodo(index: number): Todo {
+    getTodoById(id: string): Todo {
         //This method disregards filters
-        return this.filteredTodoList.getTodo(index);
+        return this.filteredTodoList.getTodoById(id);
     }
 
-    getTodoIndex(soughtTodo: Todo): number {
-        return this.filteredTodoList.getTodoList().indexOf(soughtTodo);
-    }
+    // getTodoIndex(soughtTodo: Todo): number {
+    //     return this.filteredTodoList.getTodoList().indexOf(soughtTodo);
+    // }
 
     addTodo(newTodo: Todo) {
         this.filteredTodoList.addTodo(newTodo);
@@ -34,8 +34,8 @@ export class TodoService {
         this.logChangeInLocalStorage();
     }
 
-    updateTodo(index: number, todo: Todo) {
-        this.filteredTodoList.updateTodo(index, todo);
+    updateTodo(todo: Todo) {
+        this.filteredTodoList.updateTodo(todo);
         this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
         this.logChangeInLocalStorage();
     }
@@ -45,8 +45,8 @@ export class TodoService {
         this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
     }
 
-    removeTodoAtIndex(index: number) {
-        this.filteredTodoList.removeTodoAtIndex(index);
+    removeTodoById(id: string) {
+        this.filteredTodoList.removeTodoById(id);
         this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
         this.logChangeInLocalStorage();
     }

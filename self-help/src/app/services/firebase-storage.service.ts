@@ -1,25 +1,27 @@
 import { HttpClient, HttpResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
-import { Todo } from '../models/Todo.model';
-import { Observable } from 'rxjs';
-import { map, tap, catchError, flatMap, exhaustMap, exhaust } from 'rxjs/operators';
+import { Todo, TodoWithoutId } from '../models/Todo.model';
+import { Observable, concat } from 'rxjs';
+import { map, tap, catchError, flatMap, exhaustMap, exhaust, take } from 'rxjs/operators';
 import { TodoService } from './todo.service';
 import { TypeofExpr } from '@angular/compiler';
 import { element } from 'protractor';
 import { TodoListComponent } from '../to-dos/todo-list/todo-list.component';
+import { TodoFactoryService } from '../helperServices/todo-factory.service';
 
 @Injectable({providedIn: 'root'})
 export class FirebaseStorageService {
 
     constructor(
         private httpClient: HttpClient, 
-        private authService: AuthService) {}
+        private authService: AuthService,
+        private todoFactoryService: TodoFactoryService) {}
 
     postUserTodoListNode(todoList: Todo[]): Observable<any> {
         return this.httpClient.post(
             "https://ng-self-help.firebaseio.com/todos.json",
-            { user: this.authService.user.value.email, todos: todoList},
+            { user: this.authService.user.value.email, todos: TodoWithoutId.convertArray(todoList) },
             {
                 observe: 'response'
             }
@@ -53,14 +55,19 @@ export class FirebaseStorageService {
             let responseBody = response['body'];
             console.log(responseBody);
             for(let property in responseBody) {
+                //Prepare todo factory for this session
+                //of id generation
+                this.todoFactoryService.setUserNodeKey(property);
                 if(responseBody[property].todos) {
-                    for(let allStringTodo of responseBody[property].todos) {// responseBody[property].todos.map(allStringTodo => {
+                    let idIncrement = 0;
+                    for(let allStringTodo of responseBody[property].todos) {
                         //Must convert stringified datetimes to datetimes
-                        todoArray.push( new Todo(
+                        //and generate an id
+                        todoArray.push(this.todoFactoryService.generateTodoWithoutId(
                             allStringTodo['title'],
                             allStringTodo['description'],
                             allStringTodo['category'],
-                            new Date(allStringTodo['deadlineDate']),
+                            new Date(allStringTodo['deadLineDate']),
                             new Date(allStringTodo['creationDate']),
                             allStringTodo['completed']
                         ));
@@ -91,8 +98,26 @@ export class FirebaseStorageService {
                 const patchUrl = 'https://ng-self-help.firebaseio.com/todos/' + property + '/todos.json';
                 return this.httpClient.put(
                 patchUrl,
-                todoList
+                TodoWithoutId.convertArray(todoList)
                 );
+            }
+        }));
+    }
+
+    getUserNodeKey(): Observable<any> {
+        return this.httpClient.get(
+            'https://ng-self-help.firebaseio.com/todos.json',
+            {
+                params: {
+                    orderBy: '"user"',
+                    equalTo: '"' + this.authService.user.value.email + '"'
+                },
+                observe: 'body'
+            }
+        )
+        .pipe(map(responseBody => {
+            for(const obj in responseBody) {
+                return obj.toString();
             }
         }));
     }

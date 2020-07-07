@@ -1,9 +1,8 @@
 <div class="row" [style.height.%]="85" style="overflow-y: auto;">
     <div class="col-xs-12 col-md-12">
         <app-todo-detail
-            *ngFor="let todo of todos;  let i = index;"
-            [todo]="todo"
-            [todo-index]="i">
+            *ngFor="let todo of todos"
+            [todo]="todo">
         </app-todo-detail>
     </div>    
 </div>

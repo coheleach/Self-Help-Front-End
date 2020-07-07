@@ -16,17 +16,15 @@ export class TodoCreateGuard implements CanDeactivate<DeactivationComponent>, Ca
         ): Observable<boolean> | Promise<boolean> | boolean {
             
             const todos = this.todoService.getTodos();
-            let index = +route.params['index'];
+            let id = route.params['id'];
             if(
-                todos
-                &&
-                !isNaN(index) 
+                todos 
                 && 
                 //index must correspond to existing todo
-                todos[index] != null 
+                this.todoService.getTodoById(id) != null 
                 &&
                 //existing todo should only be edited if it's not currently complete
-                !todos[index].completed 
+                !this.todoService.getTodoById(id).completed 
                 ) {
                 return true;
             }
