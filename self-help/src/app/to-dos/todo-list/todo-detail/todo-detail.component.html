@@ -15,7 +15,7 @@
                     <li *ngIf="!todo.completed" class="page-item">
                       <a 
                         class="page-link" 
-                        [routerLink]="['/todos-create', index]"
+                        [routerLink]="['/todos-create', todo.id]"
                         >Edit
                       </a>
                     </li>

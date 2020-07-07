@@ -7,6 +7,7 @@ import { FirebaseUserPayload } from '../models/firebase-user-payload';
 import { Router } from '@angular/router';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { SignInMethod } from '../enums/sign-in-method.enum';
+import { TodoFactoryService } from '../helperServices/todo-factory.service';
 
 
 @Injectable({providedIn: 'root'})
@@ -17,7 +18,10 @@ export class AuthService {
     user: BehaviorSubject<User> = new BehaviorSubject<User>(null);
     signOutTimer: any;
 
-    constructor(private httpClient: HttpClient, private router: Router) {}
+    constructor(
+        private httpClient: HttpClient, 
+        private router: Router,
+        private todoFactoryService: TodoFactoryService) {}
 
     deleteUserAccount() {
         return this.httpClient.post(

@@ -19,27 +19,44 @@ export class FilteredTodoList {
         return this.todos.slice();
     }
 
-    getTodo(index: number): Todo {
-        return this.todos[index];
+    // getTodo(index: number): Todo {
+    //     return this.todos[index];
+    // }
+
+    getTodoById(id: string): Todo {
+        return this.todos.find((todo: Todo) => {
+            return todo.id == id;
+        });
     }
 
     addTodo(newTodo: Todo) {
         this.todos.push(newTodo);
     }
 
-    updateTodo(index: number, todo: Todo) {
-        this.todos[index] = todo;
+    // updateTodo(index: number, todo: Todo) {
+    //     this.todos[index] = todo;
+    // }
+
+    updateTodo(todo: Todo): void {
+        let existingTodo = this.getTodoById(todo.id);
+        this.todos[this.todos.indexOf(existingTodo)] = todo;
     }
 
     updateTodos(todos: Todo[]) {
         this.todos = todos;
     }
 
-    removeTodoAtIndex(index: number) {
-        if(!this.todos) {
-            return null;
-        }
-        this.todos.splice(index, 1);
+    // removeTodoAtIndex(index: number) {
+    //     if(!this.todos) {
+    //         return null;
+    //     }
+    //     this.todos.splice(index, 1);
+    // }
+
+    removeTodoById(id: string) {
+        this.todos = this.todos.filter((todo: Todo) => {
+            return todo.id != id;
+        });
     }
 
     removeAllTodos() {

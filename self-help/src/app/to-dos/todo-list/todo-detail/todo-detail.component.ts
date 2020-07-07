@@ -10,7 +10,6 @@ import { TodoService } from 'src/app/services/todo.service';
 export class TodoDetailComponent implements OnInit {
 
   @Input('todo') todo: Todo;
-  @Input('todo-index') index: number;
   
   constructor(private todoService: TodoService) { }
 
@@ -19,11 +18,11 @@ export class TodoDetailComponent implements OnInit {
 
   onComplete(): void {
     this.todo.completed = !this.todo.completed;
-    this.todoService.updateTodo(this.index, this.todo);
+    this.todoService.updateTodo(this.todo);
   }
 
   onRemove(): void {
-    this.todoService.removeTodoAtIndex(this.index);
+    this.todoService.removeTodoById(this.todo.id);
   }
 
 }

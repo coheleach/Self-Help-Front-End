@@ -6,6 +6,7 @@ import { Todo } from 'src/app/models/Todo.model';
 import { TodoService } from 'src/app/services/todo.service';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FormInputToDateService } from 'src/app/helperServices/form-input-to-date.service';
+import { TodoFactoryService } from 'src/app/helperServices/todo-factory.service';
 
 @Component({
   selector: 'app-todo-create',
@@ -16,9 +17,10 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
 
   form: FormGroup;
   editMode: boolean = false;
-  todoIndex: number;
+  todoId: string;
 
   constructor(
+    private todoFactoryService: TodoFactoryService,
     private todoService: TodoService,
     private formHelperService: FormInputToDateService,
     private activatedRoute: ActivatedRoute,
@@ -27,8 +29,8 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(
       (params: Params) => {
-        this.todoIndex = params['index'];
-        if(this.todoIndex) {
+        this.todoId = params['id'];
+        if(this.todoId) {
           this.editMode = true;
         }
       }
@@ -38,13 +40,14 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
 
   onSubmit(): void {
     const submittedTodo = new Todo(
+      this.todoId,
       this.form.get('title').value,
       this.form.get('description').value,
       this.form.get('category').value,
       this.formHelperService.convertISOStringToDate(this.form.get('deadlineDate').value,'-')      
     );
     if(this.editMode) {
-      this.todoService.updateTodo(this.todoIndex ,submittedTodo);
+      this.todoService.updateTodo(submittedTodo);
     } else {
       this.todoService.addTodo(submittedTodo);
     }
@@ -108,7 +111,7 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
     let deadlineDate: string = null;
 
     if(this.editMode) {
-      const todo: Todo = this.todoService.getTodo(+this.todoIndex);
+      const todo: Todo = this.todoService.getTodoById(this.todoId);
       title = todo.title;
       category = todo.category;
       description = todo.description;
