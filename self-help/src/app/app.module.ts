@@ -10,7 +10,9 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FirebaseInterceptorService } from './interceptors/firebase-interceptor.service';
 import { SingleButtonTestComponent } from './testing-directory/single-button-test/single-button-test.component';
 import { AppRoutingModule } from './app-routing.module';
-
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -25,7 +27,9 @@ import { AppRoutingModule } from './app-routing.module';
     FormsModule,
     ReactiveFormsModule,
     MatSlideToggleModule,
-    HttpClientModule
+    HttpClientModule,
+    //StoreModule.forRoot({})
+    StoreDevtoolsModule.instrument({logOnly: environment.production})
   ],
   providers: [
     TodoCreateGuard,
