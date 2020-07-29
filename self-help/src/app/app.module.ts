@@ -13,6 +13,11 @@ import { AppRoutingModule } from './app-routing.module';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
+import { User } from './models/User.model';
+import * as fromAuthReducer from  './auth/store/auth.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { AuthEffects } from './auth/store/auth.effects';
+import { appReducer } from './store/app.reducer';
 
 @NgModule({
   declarations: [
@@ -28,7 +33,8 @@ import { environment } from '../environments/environment';
     ReactiveFormsModule,
     MatSlideToggleModule,
     HttpClientModule,
-    //StoreModule.forRoot({})
+    StoreModule.forRoot(appReducer),
+    EffectsModule.forRoot([AuthEffects]),
     StoreDevtoolsModule.instrument({logOnly: environment.production})
   ],
   providers: [

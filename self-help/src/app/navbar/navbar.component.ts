@@ -5,6 +5,10 @@ import { AuthService } from '../auth/auth.service';
 import { Router } from '@angular/router';
 import { InMemoryTodoRecallService } from '../helperServices/in-memory-todo-recall.service';
 import { TodoService } from '../services/todo.service';
+import { Store } from '@ngrx/store';
+import * as fromAuthReducer from '../auth/store/auth.reducer';
+import * as fromAuthActions from '../auth/store/auth.actions';
+import * as fromAppReducer from '../store/app.reducer';
 
 @Component({
   selector: 'app-navbar',
@@ -19,7 +23,9 @@ export class NavbarComponent implements OnInit {
     private authService: AuthService, 
     private router: Router,
     private inMemoryTodoRecallService: InMemoryTodoRecallService,
-    private todoService: TodoService) { }
+    private todoService: TodoService,
+    private store: Store<fromAppReducer.AppState>
+  ) { }
 
   ngOnInit(): void {
     this.authService.user.subscribe((user: User) => {
@@ -28,7 +34,7 @@ export class NavbarComponent implements OnInit {
   }
 
   onSignOut(): void {
-    this.authService.signOut();
+    this.store.dispatch(new fromAuthActions.AuthLogout());
   }
 
   isUserEditingTodos(): boolean {
