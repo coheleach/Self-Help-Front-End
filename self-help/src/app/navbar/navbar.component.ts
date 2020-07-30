@@ -34,7 +34,7 @@ export class NavbarComponent implements OnInit {
   }
 
   onSignOut(): void {
-    this.store.dispatch(new fromAuthActions.AuthLogout());
+    this.store.dispatch(new fromAuthActions.AuthSignOut());
   }
 
   isUserEditingTodos(): boolean {
