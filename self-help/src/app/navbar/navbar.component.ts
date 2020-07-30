@@ -28,8 +28,12 @@ export class NavbarComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.authService.user.subscribe((user: User) => {
-      this.loggedIn = (user ? true : false);
+    this.store.select('auth').subscribe((authState: fromAuthReducer.State) => {
+      if(authState.user) {
+        this.loggedIn = true;
+      } else {
+        this.loggedIn = false;
+      }
     });
   }
 
