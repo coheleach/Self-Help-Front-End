@@ -7,6 +7,8 @@ export const AUTH_SIGN_IN = '[Auth] Sign In';
 export const AUTH_REQUEST_SIGN_IN = '[Auth] Request Sign In';
 export const AUTH_REQUEST_SIGN_IN_DENIED = '[Auth] Request Sign In Denied';
 export const AUTH_SIGN_OUT = '[Auth] Sign Out';
+export const AUTH_AUTO_SIGN_IN_START = '[Auth] Auto Sign In Start';
+export const AUTH_AUTO_SIGN_IN_FAIL = '[Auth] Auto Sign In Fail';
 
 export class AuthRequestSignUp implements Action {
     readonly type: string = AUTH_REQUEST_SIGN_UP;
@@ -54,5 +56,11 @@ export class AuthSignOut implements Action {
     readonly type: string = AUTH_SIGN_OUT;
 }
 
+export class AuthAutoSignInStart implements Action {
+    readonly type: string = AUTH_AUTO_SIGN_IN_START;
+}
 
+export class AuthAutoSignInFail implements Action {
+    readonly type: string = AUTH_AUTO_SIGN_IN_FAIL;
+}
 

@@ -1,15 +1,13 @@
 import { Effect, ofType, Actions } from '@ngrx/effects'
 import * as fromAuthActions from './auth.actions';
-import * as fromAppReducer from '../../store/app.reducer';
 import { Router } from '@angular/router';
-import { tap, catchError, switchMap, map, exhaustMap } from 'rxjs/operators';
+import { tap, catchError, switchMap, map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { FirebaseUserPayload } from 'src/app/models/firebase-user-payload';
 import { of } from 'rxjs';
 import { User } from 'src/app/models/User.model';
-import { Store } from '@ngrx/store';
-import { error } from 'protractor';
+import { AuthService } from '../auth.service';
 
 const constructUser = (payload: FirebaseUserPayload): User => {
   const numSeconds = +payload.expiresIn;
@@ -48,7 +46,6 @@ export class AuthEffects {
   authRequestSignUp = this.actions$.pipe(
     ofType(fromAuthActions.AUTH_REQUEST_SIGN_UP),
     switchMap((dispatchedAction: fromAuthActions.AuthRequestSignUp) => {
-      //this.signInMethod = SignInMethod.signUp;
       return this.httpClient.post<FirebaseUserPayload>(
         'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBomaslk7POZJLJfcQwoJ0jGwGFB7B5Fhc',
         {
@@ -71,7 +68,6 @@ export class AuthEffects {
   authRequestSignIn = this.actions$.pipe(
     ofType(fromAuthActions.AUTH_REQUEST_SIGN_IN),
     switchMap((dispatchedAction: fromAuthActions.AuthRequestSignIn) => {
-      //this.signInMethod = SignInMethod.signUp;
       return this.httpClient.post<FirebaseUserPayload>(
         'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBomaslk7POZJLJfcQwoJ0jGwGFB7B5Fhc',
         {
@@ -82,12 +78,6 @@ export class AuthEffects {
       ).pipe(
         map((firebaseResponse: FirebaseUserPayload) => {
           return new fromAuthActions.AuthSignIn(constructUser(firebaseResponse));
-
-          //this.prepareUserAutoSignOut(signedInUser);
-          //store user info in local storage
-          //localStorage.setItem('user', JSON.stringify(signedInUser));
-          
-          //this.router.navigate(['/todos']);
         }),
         catchError((errorResponse: HttpErrorResponse) => {
           return of(new fromAuthActions.AuthRequestSignUpDenied(refineErrorMessage(errorResponse)));
@@ -104,6 +94,21 @@ export class AuthEffects {
     })
   )
   
+  @Effect({dispatch: false})
+  authSignInLocalStorage = this.actions$.pipe(
+    ofType(fromAuthActions.AUTH_SIGN_IN),
+    tap((dispatchedAction: fromAuthActions.AuthSignIn) => {
+      localStorage.setItem('user', JSON.stringify(dispatchedAction.payload))
+    })
+  )
+
+  @Effect({dispatch: false})
+  authprepareAutoSignOut = this.actions$.pipe(
+    ofType(fromAuthActions.AUTH_SIGN_IN),
+    map((dispatchedAction: fromAuthActions.AuthSignIn) => {
+      this.authService.prepareUserAutoSignOut(dispatchedAction.payload);
+    })
+  )
 
   @Effect({dispatch: false})
   authSignOutRedirect = this.actions$.pipe(
@@ -113,9 +118,38 @@ export class AuthEffects {
     })
   )
 
+  @Effect({dispatch: false})
+  authSignOutLocalStorage = this.actions$.pipe(
+    ofType(fromAuthActions.AUTH_SIGN_OUT),
+    tap(() => {
+      localStorage.clear();
+    })
+  )
+
+  @Effect()
+  authAutoSignInStart = this.actions$.pipe(
+    ofType(fromAuthActions.AUTH_AUTO_SIGN_IN_START),
+    map(() => {
+      const lastUserData = JSON.parse(localStorage.getItem('user'));
+        if(lastUserData) {
+            const lastUser: User = new User(
+                lastUserData['idToken'],
+                lastUserData['email'],
+                new Date(lastUserData['expirationDateTime']),
+                lastUserData['localId']
+            );
+            if(lastUser.expirationDateTime > new Date()) {
+                return new fromAuthActions.AuthSignIn(lastUser);
+            }
+        }
+        return new fromAuthActions.AuthAutoSignInFail();
+    })
+  )
+
   constructor(
     private actions$: Actions,  
     private router: Router,
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private authService: AuthService
   ) {}
 }

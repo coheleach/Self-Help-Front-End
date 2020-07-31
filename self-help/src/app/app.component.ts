@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from './auth/auth.service';
+import { Store } from '@ngrx/store';
+import * as fromAppReducer from './store/app.reducer';
+import * as fromAuthActions from './auth/store/auth.actions';
 
 @Component({
   selector: 'app-root',
@@ -9,9 +12,10 @@ import { AuthService } from './auth/auth.service';
 export class AppComponent implements OnInit {
   title = 'self-help';
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private store: Store<fromAppReducer.AppState>) { }
 
   ngOnInit() {
-    this.authService.tryAutoSignIn();
+    this.store.dispatch(new fromAuthActions.AuthAutoSignInStart());
+    //this.authService.tryAutoSignIn();
   }
 }

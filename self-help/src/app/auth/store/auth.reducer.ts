@@ -1,4 +1,4 @@
-import { AUTH_SIGN_IN, AUTH_SIGN_OUT, AUTH_REQUEST_SIGN_IN, AUTH_REQUEST_SIGN_IN_DENIED, AUTH_REQUEST_SIGN_UP, AUTH_REQUEST_SIGN_UP_DENIED } from './auth.actions';
+import { AUTH_SIGN_IN, AUTH_SIGN_OUT, AUTH_REQUEST_SIGN_IN, AUTH_REQUEST_SIGN_IN_DENIED, AUTH_REQUEST_SIGN_UP, AUTH_REQUEST_SIGN_UP_DENIED, AUTH_AUTO_SIGN_IN_START, AUTH_AUTO_SIGN_IN_FAIL } from './auth.actions';
 import { User } from '../../models/User.model';
 import { SignInMethod } from '../../enums/sign-in-method.enum';
 
@@ -51,6 +51,16 @@ export function authReducer(state: State = initialState, action) {
                 ...state,
                 signInMethod: SignInMethod.none,
                 authErrorMessage: action.payload
+            }
+        case AUTH_AUTO_SIGN_IN_START:
+            return {
+                ...state,
+                signInMethod: SignInMethod.auto,
+            }
+        case AUTH_AUTO_SIGN_IN_FAIL:
+            return {
+                ...state,
+                signInMethod: SignInMethod.none
             }
         default:
             return state;
