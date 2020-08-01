@@ -8,9 +8,8 @@ import { TodoCreateGuard } from '../guards/todo-create.guard';
 
 const routes: Routes = [
     { path: '', component: ToDosComponent, canActivate: [AuthGuard], resolve: [TodoListResolver] },
-    { path: 'create', component: TodoCreateComponent, canActivate: [AuthGuard], canDeactivate: [TodoCreateGuard], children: [
-       { path: ':id', component: TodoCreateComponent, canActivate: [TodoCreateGuard], resolve: [TodoListResolver] }
-    ]}
+    { path: 'create', component: TodoCreateComponent, canActivate: [AuthGuard], canDeactivate: [TodoCreateGuard]},
+    { path: 'create/:id', component: TodoCreateComponent, canActivate: [AuthGuard, TodoCreateGuard], resolve: [TodoListResolver]}
 ]
 
 @NgModule({

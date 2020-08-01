@@ -10,21 +10,40 @@ import { map, exhaustMap, tap, take, flatMap, switchMap, exhaust } from 'rxjs/op
 import { FirebaseStorageService } from '../services/firebase-storage.service';
 import { userInfo } from 'os';
 import { SignInMethod } from '../enums/sign-in-method.enum';
+import { Store } from '@ngrx/store';
+import * as fromAppReducer from '../store/app.reducer';
+import * as fromAuthReducer from '../auth/store/auth.reducer';
+import * as fromAuthActions from '../auth/store/auth.actions';
+import { User } from '../models/User.model';
+
 
 @Injectable({providedIn: 'root'})
 export class TodoListResolver implements Resolve<Todo[]> {
     
+    private AuthStateCopy: fromAuthReducer.State;
+
     constructor( 
         private authService: AuthService, 
         private todoService: TodoService,
         private inMemoryTodoRecallService: InMemoryTodoRecallService,
-        private firebaseDataService: FirebaseStorageService) { }
+        private firebaseDataService: FirebaseStorageService,
+        private store: Store<fromAppReducer.AppState>
+    ) { 
+        this.store.select('auth').subscribe(
+            (authState: fromAuthReducer.State) => {
+                this.AuthStateCopy = {
+                    ...authState
+                }
+            }
+        );
+    }
 
     resolve(
         route: ActivatedRouteSnapshot, 
         state: RouterStateSnapshot): Observable<Todo[]> | Promise<Todo[]> | Todo[] {
             
-            switch(this.authService.signInMethod) {
+
+            switch(this.AuthStateCopy.signInMethod) {
                 case SignInMethod.none:
                     return null;
                 case SignInMethod.manual:
@@ -61,12 +80,13 @@ export class TodoListResolver implements Resolve<Todo[]> {
         this.firebaseDataService.postUserTodoListNode(emptyTodoList).subscribe(
             (response) => {
                 this.todoService.updateTodos(emptyTodoList);
-                this.authService.signInMethod = SignInMethod.manual;
+                //this.authService.signInMethod = SignInMethod.manual;
             },
             (error) => {
                 alert('error creating storage space for new user... removing new account');
-                this.authService.deleteUserAccount().subscribe();
-                this.authService.signOut();
+                this.authService.deleteUserAccount(this.AuthStateCopy.user.idToken).subscribe();
+                this.store.dispatch(new fromAuthActions.AuthSignOut());
+                //this.authService.signOut();
             });
         return emptyTodoList;
         

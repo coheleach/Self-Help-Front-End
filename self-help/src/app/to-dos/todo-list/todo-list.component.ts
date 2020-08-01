@@ -26,5 +26,7 @@ export class TodoListComponent implements OnInit {
         this.todos = todoList;
       }
     )
+
+    console.log(this.todos);
   }
 }

@@ -27,8 +27,11 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
     private router: Router) { }
 
   ngOnInit(): void {
+    console.log(this.activatedRoute);
     this.activatedRoute.params.subscribe(
       (params: Params) => {
+        console.log('params.id: ' + params['id']);
+        console.log(params);
         this.todoId = params['id'];
         if(this.todoId) {
           this.editMode = true;

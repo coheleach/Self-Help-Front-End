@@ -2,6 +2,8 @@ import { Todo } from './Todo.model';
 
 export class FilteredTodoList {
 
+    private static inMemoryTempId: number = 1;
+
     private todos: Todo[] = [];
     private completionStatusFilter: string = '';
     private categoryFilter: string[] = [];
@@ -30,6 +32,17 @@ export class FilteredTodoList {
     }
 
     addTodo(newTodo: Todo) {
+
+        //bugfix function below
+        //to handle todos without
+        //id because they didn't
+        //exist in firebase.  They
+        //have been created in
+        //memory only
+        if(!newTodo.id) {
+            newTodo.id = (FilteredTodoList.inMemoryTempId++).toString();
+        }
+        ///////////////////////////////////
         this.todos.push(newTodo);
     }
 

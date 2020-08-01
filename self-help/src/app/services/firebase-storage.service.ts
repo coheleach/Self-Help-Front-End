@@ -9,19 +9,35 @@ import { TypeofExpr } from '@angular/compiler';
 import { element } from 'protractor';
 import { TodoListComponent } from '../to-dos/todo-list/todo-list.component';
 import { TodoFactoryService } from '../helperServices/todo-factory.service';
+import * as fromAppReducer from '../store/app.reducer';
+import * as fromAuthReducer from '../auth/store/auth.reducer';
+import { Store } from '@ngrx/store';
+import { User } from '../models/User.model';
 
 @Injectable({providedIn: 'root'})
 export class FirebaseStorageService {
 
+    private currentUserCopy: User;
+
     constructor(
         private httpClient: HttpClient, 
         private authService: AuthService,
-        private todoFactoryService: TodoFactoryService) {}
+        private todoFactoryService: TodoFactoryService,
+        private store: Store<fromAppReducer.AppState>
+    ) {
+        this.store.select('auth').subscribe(
+            (authState: fromAuthReducer.State) => {
+                this.currentUserCopy = {
+                    ...authState.user
+                }
+            }
+        )
+    }
 
     postUserTodoListNode(todoList: Todo[]): Observable<any> {
         return this.httpClient.post(
             "https://ng-self-help.firebaseio.com/todos.json",
-            { user: this.authService.user.value.email, todos: TodoWithoutId.convertArray(todoList) },
+            { user: this.currentUserCopy.email, todos: TodoWithoutId.convertArray(todoList) },
             {
                 observe: 'response'
             }
@@ -43,7 +59,7 @@ export class FirebaseStorageService {
             {
                 params: {
                     orderBy: '"user"',
-                    equalTo: '"' + this.authService.user.value.email + '"'
+                    equalTo: '"' + this.currentUserCopy.email + '"'
                 },
                 observe: 'response',
             }
@@ -84,7 +100,7 @@ export class FirebaseStorageService {
             {
                 params: {
                     orderBy: '"user"',
-                    equalTo: '"' + this.authService.user.value.email + '"'
+                    equalTo: '"' + this.currentUserCopy.email + '"'
                 },
                 observe: 'body'
             }
@@ -110,7 +126,7 @@ export class FirebaseStorageService {
             {
                 params: {
                     orderBy: '"user"',
-                    equalTo: '"' + this.authService.user.value.email + '"'
+                    equalTo: '"' + this.currentUserCopy.email + '"'
                 },
                 observe: 'body'
             }
