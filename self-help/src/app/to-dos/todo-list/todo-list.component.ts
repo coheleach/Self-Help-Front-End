@@ -4,6 +4,11 @@ import { Todo } from 'src/app/models/Todo.model';
 import { take, map, exhaustMap } from 'rxjs/operators';
 import { TodoCategoryPipe } from 'src/app/custom-pipes/todo-category.pipe';
 import { TodoStatusPipe } from 'src/app/custom-pipes/todo-status.pipe';
+import { Store } from '@ngrx/store';
+import * as fromAppReducer from '../../store/app.reducer';
+import * as fromTodosActions from '../store/todos.actions';
+import * as fromTodosReducer from '../store/todos.reducer';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-todo-list',
@@ -15,17 +20,29 @@ export class TodoListComponent implements OnInit {
   todos: Todo[] = [];
   completionStatusFilter: string = '';
   categoryFilter: string[] = [];
+  storeSubscription: Subscription;
   
-  constructor(private todoService: TodoService) { }
+  constructor(
+    private todoService: TodoService,
+    private store: Store<fromAppReducer.AppState>,
+  ) { }
 
   ngOnInit(): void {
 
-    this.todos = this.todoService.getTodos();
-    this.todoService.todoListSubject.subscribe(
-      (todoList: Todo[]) => {
-        this.todos = todoList;
-      }
-    )
+    //this.todos = this.todoService.getTodos();
+    // this.todoService.todoListSubject.subscribe(
+    //   (todoList: Todo[]) => {
+    //     this.todos = todoList;
+    //   }
+    // )
+
+    this.storeSubscription = this.store.select('todos').pipe(
+      map((todosState: fromTodosReducer.State) => {
+        return todosState.todos.elements;
+      })
+    ).subscribe((todos: Todo[]) => {
+      this.todos = todos;
+    })
 
     console.log(this.todos);
   }

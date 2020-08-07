@@ -14,6 +14,8 @@ import { Store } from '@ngrx/store';
 import * as fromAppReducer from '../store/app.reducer';
 import * as fromAuthReducer from '../auth/store/auth.reducer';
 import * as fromAuthActions from '../auth/store/auth.actions';
+import * as fromTodosReducer from '../to-dos/store/todos.reducer';
+import * as fromTodosActions from '../to-dos/store/todos.actions';
 import { User } from '../models/User.model';
 
 
@@ -61,12 +63,14 @@ export class TodoListResolver implements Resolve<Todo[]> {
         
         const localStorageTodos: Todo[] = this.inMemoryTodoRecallService.fetchTodosFromLocalStorage();
         if(localStorageTodos) {
-            this.todoService.updateTodos(localStorageTodos);
+            //this.todoService.updateTodos(localStorageTodos);
+            this.store.dispatch(new fromTodosActions.SetTodos(localStorageTodos));
             return localStorageTodos;
         }
         this.firebaseDataService.getAllUsersTodos().subscribe(
             (todoList: Todo[]) => {
-                this.todoService.updateTodos(todoList);
+                //this.todoService.updateTodos(todoList);
+                this.store.dispatch(new fromTodosActions.SetTodos(todoList));
             },
             error => {
                 alert('encountered an error retrieving user todos');
@@ -79,7 +83,8 @@ export class TodoListResolver implements Resolve<Todo[]> {
         let emptyTodoList: Todo[] = [];
         this.firebaseDataService.postUserTodoListNode(emptyTodoList).subscribe(
             (response) => {
-                this.todoService.updateTodos(emptyTodoList);
+                this.store.dispatch(new fromTodosActions.SetTodos(emptyTodoList));
+                //this.todoService.updateTodos(emptyTodoList);
                 //this.authService.signInMethod = SignInMethod.manual;
             },
             (error) => {
@@ -89,17 +94,5 @@ export class TodoListResolver implements Resolve<Todo[]> {
                 //this.authService.signOut();
             });
         return emptyTodoList;
-        
-        // return this.firebaseDataService.postUserTodoListNode(emptyTodoList).pipe(flatMap(response => {
-        //     console.log(response);
-        //     this.todoService.updateTodos(emptyTodoList);
-        //     this.authService.signInMethod = SignInMethod.manual;
-        //     return emptyTodoList;
-        // }), error => {
-        //     alert('error creating storage space for new user... removing new account');
-        //     this.authService.deleteUserAccount().subscribe();
-        //     this.authService.signOut();
-        //     return null;
-        // });
     }
 }
