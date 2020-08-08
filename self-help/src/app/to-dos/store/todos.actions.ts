@@ -4,6 +4,7 @@ import { Todo } from 'src/app/models/Todo.model';
 export const SET_TODOS = '[Todos] Set Todos';
 export const CLEAR_FILTERS = '[Todos] Clear Filters';
 export const SET_CATEGORY_FILTERS = '[Todos] Set Category Filters';
+export const SET_COMPLETION_STATUS_FILTER = '[Todos] Set Completion Status Filter';
 
 export class SetTodos implements Action {
     readonly type: string = SET_TODOS;
@@ -19,4 +20,10 @@ export class SetCategoryFilters implements Action {
     readonly type: string = SET_CATEGORY_FILTERS;
 
     constructor(public payload: string[]) {}
+}
+
+export class SetCompletionStatusFilter implements Action {
+    readonly type: string = SET_COMPLETION_STATUS_FILTER;
+
+    constructor(public payload: string) {}
 }

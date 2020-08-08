@@ -1,5 +1,5 @@
 import { Todo } from 'src/app/models/Todo.model';
-import { SET_TODOS, CLEAR_FILTERS, SET_CATEGORY_FILTERS } from './todos.actions';
+import { SET_TODOS, CLEAR_FILTERS, SET_CATEGORY_FILTERS, SET_COMPLETION_STATUS_FILTER } from './todos.actions';
 
 export interface State {
     todos: {
@@ -46,6 +46,14 @@ export function todosReducer(state: State = initialState, action) {
                     categoryFilters: action.payload
                 }
             };
+        case SET_COMPLETION_STATUS_FILTER:
+            return {
+                ...state,
+                todos: {
+                    ...state.todos,
+                    completionStatusFilter: action.payload
+                }
+            }
         default:
             return state;
     }
