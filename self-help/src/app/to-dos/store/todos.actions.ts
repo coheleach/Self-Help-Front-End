@@ -3,6 +3,7 @@ import { Todo } from 'src/app/models/Todo.model';
 
 export const SET_TODOS = '[Todos] Set Todos';
 export const CLEAR_FILTERS = '[Todos] Clear Filters';
+export const SET_CATEGORY_FILTERS = '[Todos] Set Category Filters';
 
 export class SetTodos implements Action {
     readonly type: string = SET_TODOS;
@@ -12,4 +13,10 @@ export class SetTodos implements Action {
 
 export class ClearFilters implements Action {
     readonly type: string = CLEAR_FILTERS;
+}
+
+export class SetCategoryFilters implements Action {
+    readonly type: string = SET_CATEGORY_FILTERS;
+
+    constructor(public payload: string[]) {}
 }
