@@ -88,10 +88,10 @@ export class FilteredTodoList {
         this.categoryFilter = category;
     }
 
-    clearAllFilters() {
-        this.completionStatusFilter = '';
-        this.categoryFilter = [];
-    }
+    // clearAllFilters() {
+    //     this.completionStatusFilter = '';
+    //     this.categoryFilter = [];
+    // }
 
     applyTodoFilters(todos: Todo[]): Todo[] {
         todos = this.applyCategoryFilter(todos);

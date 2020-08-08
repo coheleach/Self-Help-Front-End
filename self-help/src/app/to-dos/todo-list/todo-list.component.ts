@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { TodoService } from 'src/app/services/todo.service';
 import { Todo } from 'src/app/models/Todo.model';
 import { take, map, exhaustMap } from 'rxjs/operators';
@@ -15,7 +15,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './todo-list.component.html',
   styleUrls: ['./todo-list.component.css']
 })
-export class TodoListComponent implements OnInit {
+export class TodoListComponent implements OnInit, OnDestroy {
 
   todos: Todo[] = [];
   completionStatusFilter: string = '';
@@ -38,12 +38,15 @@ export class TodoListComponent implements OnInit {
 
     this.storeSubscription = this.store.select('todos').pipe(
       map((todosState: fromTodosReducer.State) => {
-        return todosState.todos.elements;
+        console.log('hi')
+        return this.todoService.applyTodoFilters(todosState);
       })
     ).subscribe((todos: Todo[]) => {
       this.todos = todos;
     })
+  }
 
-    console.log(this.todos);
+  ngOnDestroy() {
+    this.storeSubscription.unsubscribe();
   }
 }

@@ -9,14 +9,17 @@ import { Router } from '@angular/router';
 })
 export class ToDosComponent implements OnInit, OnDestroy {
 
-  constructor(private todoService: TodoService) { }
+  constructor(
+    private todoService: TodoService
+  
+  ) { }
 
   ngOnInit(): void {
-    this.todoService.clearAllFilters();
+    //this.todoService.clearAllFilters();
   }
 
   ngOnDestroy(): void {
-    this.todoService.clearAllFilters();
+    //this.todoService.clearAllFilters();
   }
 
 }
