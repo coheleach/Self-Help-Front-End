@@ -17,6 +17,7 @@ import * as fromAuthActions from '../auth/store/auth.actions';
 import * as fromTodosReducer from '../to-dos/store/todos.reducer';
 import * as fromTodosActions from '../to-dos/store/todos.actions';
 import { User } from '../models/User.model';
+import { Actions, ofType } from '@ngrx/effects';
 
 
 @Injectable({providedIn: 'root'})
@@ -29,7 +30,8 @@ export class TodoListResolver implements Resolve<Todo[]> {
         private todoService: TodoService,
         private inMemoryTodoRecallService: InMemoryTodoRecallService,
         private firebaseDataService: FirebaseStorageService,
-        private store: Store<fromAppReducer.AppState>
+        private store: Store<fromAppReducer.AppState>,
+        private actions$: Actions
     ) { 
         this.store.select('auth').subscribe(
             (authState: fromAuthReducer.State) => {
@@ -67,15 +69,27 @@ export class TodoListResolver implements Resolve<Todo[]> {
             this.store.dispatch(new fromTodosActions.SetTodos(localStorageTodos));
             return localStorageTodos;
         }
-        this.firebaseDataService.getAllUsersTodos().subscribe(
-            (todoList: Todo[]) => {
-                //this.todoService.updateTodos(todoList);
-                this.store.dispatch(new fromTodosActions.SetTodos(todoList));
+        this.store.dispatch(new fromTodosActions.FetchTodos());
+        this.actions$.pipe(
+            ofType(fromTodosActions.SET_TODOS),
+            take(1)
+        ).subscribe((todos: Todo[]) => {
+                return todos;
             },
             error => {
                 alert('encountered an error retrieving user todos');
             }
         );
+        
+        // this.firebaseDataService.getAllUsersTodos().subscribe(
+        //     (todoList: Todo[]) => {
+        //         //this.todoService.updateTodos(todoList);
+        //         this.store.dispatch(new fromTodosActions.SetTodos(todoList));
+        //     },
+        //     error => {
+        //         alert('encountered an error retrieving user todos');
+        //     }
+        // );
     }
 
     private scaffoldNewUserStorage(): Todo[] | Observable<Todo[]> {
