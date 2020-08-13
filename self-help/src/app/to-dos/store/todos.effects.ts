@@ -11,8 +11,47 @@ import * as fromTodosReducer from './todos.reducer';
 import { User } from 'src/app/models/User.model';
 import { TodoFactoryService } from 'src/app/helperServices/todo-factory.service';
 import { InMemoryTodoRecallService } from 'src/app/helperServices/in-memory-todo-recall.service';
+import { Observable } from 'rxjs';
 
-
+export function retrieveFirebaseTodos(user: User, httpClient: HttpClient, todoFactoryService: TodoFactoryService): Observable<Todo[]> {
+    return httpClient.get<HttpResponse<any>>(
+        'https://ng-self-help.firebaseio.com/todos.json',
+        {
+            params: {
+                orderBy: '"user"',
+                equalTo: '"' + user.email + '"'
+            },
+            observe: 'response',
+        }
+    ).pipe(
+        map((response: HttpResponse<any>) => {
+            let todoArray: Todo[] = [];
+            let responseBody = response['body'];
+            console.log(responseBody);
+            for(let property in responseBody) {
+            //Prepare todo factory for this session
+            //of id generation
+                todoFactoryService.setUserNodeKey(property);
+                if(responseBody[property].todos) {
+                    let idIncrement = 0;
+                    for(let allStringTodo of responseBody[property].todos) {
+                        //Must convert stringified datetimes to datetimes
+                        //and generate an id
+                        todoArray.push(todoFactoryService.generateTodoWithoutId(
+                            allStringTodo['title'],
+                            allStringTodo['description'],
+                            allStringTodo['category'],
+                            new Date(allStringTodo['deadLineDate']),
+                            new Date(allStringTodo['creationDate']),
+                            allStringTodo['completed']
+                        ));
+                    }
+                }
+            }
+            return todoArray;
+        })
+    );
+}
 
 @Injectable()
 export class TodosEffects {
@@ -77,6 +116,21 @@ export class TodosEffects {
             this.inMemoryTodoLocalRecallService.logTodosInLocalStorage(todosState.todos.elements);
         })
     )
+
+    @Effect()
+    revertToLastSavedTodos = this.actions$.pipe(
+        ofType(fromTodosActions.REVERT_TODOS_LAST_CHANGED),
+        switchMap(() => {
+            return this.store.select('auth');
+        }),
+        switchMap((authState: fromAuthReducer.State) => {
+            return retrieveFirebaseTodos(authState.user, this.httpClient, this.todoFactoryService);
+        }),
+        map((lastSavedTodoList: Todo[]) => {
+            this.inMemoryTodoLocalRecallService.removeTodosInLocalStorage();
+            return new fromTodosActions.SetTodos(lastSavedTodoList);
+        }),
+    );
     
     constructor(
         private actions$: Actions,

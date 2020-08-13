@@ -9,6 +9,7 @@ import { Store } from '@ngrx/store';
 import * as fromAuthReducer from '../auth/store/auth.reducer';
 import * as fromAuthActions from '../auth/store/auth.actions';
 import * as fromAppReducer from '../store/app.reducer';
+import * as fromTodosAction from '../to-dos/store/todos.actions';
 
 @Component({
   selector: 'app-navbar',
@@ -49,7 +50,8 @@ export class NavbarComponent implements OnInit {
   }
 
   onUndoChanges() {
-    this.todoService.revertToLastSavedTodos();
+    //this.todoService.revertToLastSavedTodos();
+    this.store.dispatch(new fromTodosAction.RevertTodosLastSaved());
   }
 
   onSaveChanges() {

@@ -8,6 +8,7 @@ export const SET_COMPLETION_STATUS_FILTER = '[Todos] Set Completion Status Filte
 export const FETCH_TODOS = '[Todos] Fetch Todos';
 export const CREATE_TODO = '[Todos] Create Todo';
 export const LOG_TODO_CHANGES = '[Todos] Log Todo Changes';
+export const REVERT_TODOS_LAST_CHANGED = '[Todos] Revert Todos Last Saved';
 
 export class SetTodos implements Action {
     readonly type: string = SET_TODOS;
@@ -23,6 +24,10 @@ export class CreateTodo implements Action {
     readonly type: string = CREATE_TODO;
 
     constructor(public payload: Todo) {}
+}
+
+export class RevertTodosLastSaved implements Action {
+    readonly type: string = REVERT_TODOS_LAST_CHANGED;
 }
 
 export class ClearFilters implements Action {

@@ -40,7 +40,6 @@ export function todosReducer(state: State = initialState, action) {
             //have been created in
             //memory only
             
-            //action.payload.id = state.todos.inMemoryTempId
             let todoWithMakeshiftId: Todo = {
                 ...action.payload,
                 id: state.todos.inMemoryTempId

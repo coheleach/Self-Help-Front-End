@@ -31,11 +31,11 @@ export class TodoService {
     //     return this.filteredTodoList.getTodoList().indexOf(soughtTodo);
     // }
 
-    addTodo(newTodo: Todo) {
-        this.filteredTodoList.addTodo(newTodo);
-        this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
-        this.logChangeInLocalStorage();
-    }
+    // addTodo(newTodo: Todo) {
+    //     this.filteredTodoList.addTodo(newTodo);
+    //     this.todoListSubject.next(this.filteredTodoList.getFilteredTodoList());
+    //     this.logChangeInLocalStorage();
+    // }
 
     updateTodo(todo: Todo) {
         this.filteredTodoList.updateTodo(todo);
