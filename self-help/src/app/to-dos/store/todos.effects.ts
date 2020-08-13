@@ -3,12 +3,16 @@ import { Injectable } from '@angular/core';
 import { Todo } from 'src/app/models/Todo.model';
 import * as fromTodosActions from './todos.actions';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import * as fromAppReducer from '../../store/app.reducer';
 import * as fromAuthReducer from '../../auth/store/auth.reducer'
+import * as fromTodosReducer from './todos.reducer';
 import { User } from 'src/app/models/User.model';
 import { TodoFactoryService } from 'src/app/helperServices/todo-factory.service';
+import { InMemoryTodoRecallService } from 'src/app/helperServices/in-memory-todo-recall.service';
+
+
 
 @Injectable()
 export class TodosEffects {
@@ -62,11 +66,23 @@ export class TodosEffects {
             )
         })
     )
+
+    @Effect({dispatch: false})
+    logTodoChanges = this.actions$.pipe(
+        ofType(fromTodosActions.CREATE_TODO),
+        switchMap(() => {
+            return this.store.select('todos')
+        }),
+        tap((todosState: fromTodosReducer.State) => {
+            this.inMemoryTodoLocalRecallService.logTodosInLocalStorage(todosState.todos.elements);
+        })
+    )
     
     constructor(
         private actions$: Actions,
         private httpClient: HttpClient,
         private todoFactoryService: TodoFactoryService,
+        private inMemoryTodoLocalRecallService: InMemoryTodoRecallService,
         private store: Store<fromAppReducer.AppState>
     ) {}
 

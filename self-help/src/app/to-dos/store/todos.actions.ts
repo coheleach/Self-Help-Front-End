@@ -6,6 +6,8 @@ export const CLEAR_FILTERS = '[Todos] Clear Filters';
 export const SET_CATEGORY_FILTERS = '[Todos] Set Category Filters';
 export const SET_COMPLETION_STATUS_FILTER = '[Todos] Set Completion Status Filter';
 export const FETCH_TODOS = '[Todos] Fetch Todos';
+export const CREATE_TODO = '[Todos] Create Todo';
+export const LOG_TODO_CHANGES = '[Todos] Log Todo Changes';
 
 export class SetTodos implements Action {
     readonly type: string = SET_TODOS;
@@ -15,6 +17,12 @@ export class SetTodos implements Action {
 
 export class FetchTodos implements Action {
     readonly type: string = FETCH_TODOS;
+}
+
+export class CreateTodo implements Action {
+    readonly type: string = CREATE_TODO;
+
+    constructor(public payload: Todo) {}
 }
 
 export class ClearFilters implements Action {
@@ -31,4 +39,8 @@ export class SetCompletionStatusFilter implements Action {
     readonly type: string = SET_COMPLETION_STATUS_FILTER;
 
     constructor(public payload: string) {}
+}
+
+export class LogTodoInLocalStorage implements Action {
+    readonly type: string = LOG_TODO_CHANGES;
 }

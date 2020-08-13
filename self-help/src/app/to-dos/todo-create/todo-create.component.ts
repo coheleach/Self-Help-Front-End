@@ -7,6 +7,11 @@ import { TodoService } from 'src/app/services/todo.service';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FormInputToDateService } from 'src/app/helperServices/form-input-to-date.service';
 import { TodoFactoryService } from 'src/app/helperServices/todo-factory.service';
+import { Store } from '@ngrx/store';
+import * as fromAppReducer from '../../store/app.reducer';
+import * as fromTodosActions from '../store/todos.actions';
+import * as fromTodosReducer from '../store/todos.reducer';
+import { map, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-todo-create',
@@ -24,7 +29,9 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
     private todoService: TodoService,
     private formHelperService: FormInputToDateService,
     private activatedRoute: ActivatedRoute,
-    private router: Router) { }
+    private router: Router,
+    private store: Store<fromAppReducer.AppState>
+  ) { }
 
   ngOnInit(): void {
     console.log(this.activatedRoute);
@@ -42,7 +49,7 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
   }
 
   onSubmit(): void {
-    const submittedTodo = new Todo(
+    let submittedTodo = new Todo(
       this.todoId,
       this.form.get('title').value,
       this.form.get('description').value,
@@ -52,7 +59,8 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
     if(this.editMode) {
       this.todoService.updateTodo(submittedTodo);
     } else {
-      this.todoService.addTodo(submittedTodo);
+      //this.todoService.addTodo(submittedTodo);
+      this.store.dispatch(new fromTodosActions.CreateTodo(submittedTodo));
     }
     this.router.navigate(['/','todos']);
   }
@@ -114,12 +122,19 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
     let deadlineDate: string = null;
 
     if(this.editMode) {
-      const todo: Todo = this.todoService.getTodoById(this.todoId);
-      title = todo.title;
-      category = todo.category;
-      description = todo.description;
-      //use functions to set date as 'YYY-MM-DD'
-      deadlineDate = todo.deadlineDate.toISOString().substr(0,10);
+      //const todo: Todo = this.todoService.getTodoById(this.todoId);
+      this.store.select('todos').pipe(
+        take(1),
+        map((todosState: fromTodosReducer.State) => {
+          return todosState.todos.elements[+this.todoId]
+        })
+      ).subscribe((todo: Todo) => {
+        title = todo.title;
+        category = todo.category;
+        description = todo.description;
+        //use functions to set date as 'YYY-MM-DD'
+        deadlineDate = todo.deadlineDate.toISOString().substr(0,10);
+      })
     }
     
     this.form = new FormGroup({
