@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Todo } from 'src/app/models/Todo.model';
 import * as fromTodosActions from './todos.actions';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, switchMap, tap, take } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import * as fromAppReducer from '../../store/app.reducer';
 import * as fromAuthReducer from '../../auth/store/auth.reducer'
@@ -61,6 +61,7 @@ export class TodosEffects {
         ofType(fromTodosActions.FETCH_TODOS),
         switchMap((dispatchedAction: fromTodosActions.FetchTodos) => {
             return this.store.select('auth').pipe(
+                take(1),
                 map((userState: fromAuthReducer.State) => {
                     return userState.user
                 }),
@@ -110,7 +111,9 @@ export class TodosEffects {
     logTodoChanges = this.actions$.pipe(
         ofType(fromTodosActions.CREATE_TODO),
         switchMap(() => {
-            return this.store.select('todos')
+            return this.store.select('todos').pipe(
+                take(1)
+            )
         }),
         tap((todosState: fromTodosReducer.State) => {
             this.inMemoryTodoLocalRecallService.logTodosInLocalStorage(todosState.todos.elements);
@@ -121,7 +124,9 @@ export class TodosEffects {
     revertToLastSavedTodos = this.actions$.pipe(
         ofType(fromTodosActions.REVERT_TODOS_LAST_CHANGED),
         switchMap(() => {
-            return this.store.select('auth');
+            return this.store.select('auth').pipe(
+                take(1)
+            );
         }),
         switchMap((authState: fromAuthReducer.State) => {
             return retrieveFirebaseTodos(authState.user, this.httpClient, this.todoFactoryService);
