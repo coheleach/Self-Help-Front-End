@@ -118,11 +118,11 @@ export class TodoService {
 
     applyTodoFilters(todosState: fromTodosReducer.State): Todo[] {
         let todos: Todo[] = todosState.todos.elements.slice();
-        console.log('original todos: ' + todosState.todos.elements);
+        //console.log('original todos: ' + todosState.todos.elements);
         todos = this.applyCategoryFilter(todos, todosState.todos.categoryFilters);
-        console.log('todos after category filter: ' + todos);
+        //console.log('todos after category filter: ' + todos);
         todos = this.applyCompletionStatusFilter(todos, todosState.todos.completionStatusFilter);
-        console.log('todos after status filter ' + todos);
+        //console.log('todos after status filter ' + todos);
         return todos;
     }
 

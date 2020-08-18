@@ -38,7 +38,6 @@ export class TodoListComponent implements OnInit, OnDestroy {
 
     this.storeSubscription = this.store.select('todos').pipe(
       map((todosState: fromTodosReducer.State) => {
-        console.log('hi')
         return this.todoService.applyTodoFilters(todosState);
       })
     ).subscribe((todos: Todo[]) => {

@@ -66,43 +66,49 @@ export class TodosEffects {
                     return userState.user
                 }),
                 switchMap((user: User) => {
-                    return this.httpClient.get<HttpResponse<any>>(
-                        'https://ng-self-help.firebaseio.com/todos.json',
-                        {
-                            params: {
-                                orderBy: '"user"',
-                                equalTo: '"' + user.email + '"'
-                            },
-                            observe: 'response',
-                        }
-                    )
+                    return retrieveFirebaseTodos(user, this.httpClient, this.todoFactoryService);
                 }),
-                map((response: HttpResponse<any>) => {
-                    let todoArray: Todo[] = [];
-                    let responseBody = response['body'];
-                    console.log(responseBody);
-                    for(let property in responseBody) {
-                    //Prepare todo factory for this session
-                    //of id generation
-                        this.todoFactoryService.setUserNodeKey(property);
-                        if(responseBody[property].todos) {
-                            let idIncrement = 0;
-                            for(let allStringTodo of responseBody[property].todos) {
-                                //Must convert stringified datetimes to datetimes
-                                //and generate an id
-                                todoArray.push(this.todoFactoryService.generateTodoWithoutId(
-                                    allStringTodo['title'],
-                                    allStringTodo['description'],
-                                    allStringTodo['category'],
-                                    new Date(allStringTodo['deadLineDate']),
-                                    new Date(allStringTodo['creationDate']),
-                                    allStringTodo['completed']
-                                ));
-                            }
-                        }
-                    }
-                    return new fromTodosActions.SetTodos(todoArray);
+                map((todosArray: Todo[]) => {
+                    return new fromTodosActions.SetTodos(todosArray);
                 })
+                // switchMap((user: User) => {
+                //     return this.httpClient.get<HttpResponse<any>>(
+                //         'https://ng-self-help.firebaseio.com/todos.json',
+                //         {
+                //             params: {
+                //                 orderBy: '"user"',
+                //                 equalTo: '"' + user.email + '"'
+                //             },
+                //             observe: 'response',
+                //         }
+                //     )
+                // }),
+                // map((response: HttpResponse<any>) => {
+                //     let todoArray: Todo[] = [];
+                //     let responseBody = response['body'];
+                //     console.log(responseBody);
+                //     for(let property in responseBody) {
+                //     //Prepare todo factory for this session
+                //     //of id generation
+                //         this.todoFactoryService.setUserNodeKey(property);
+                //         if(responseBody[property].todos) {
+                //             let idIncrement = 0;
+                //             for(let allStringTodo of responseBody[property].todos) {
+                //                 //Must convert stringified datetimes to datetimes
+                //                 //and generate an id
+                //                 todoArray.push(this.todoFactoryService.generateTodoWithoutId(
+                //                     allStringTodo['title'],
+                //                     allStringTodo['description'],
+                //                     allStringTodo['category'],
+                //                     new Date(allStringTodo['deadLineDate']),
+                //                     new Date(allStringTodo['creationDate']),
+                //                     allStringTodo['completed']
+                //                 ));
+                //             }
+                //         }
+                //     }
+                //     return new fromTodosActions.SetTodos(todoArray);
+                // })
             )
         })
     )

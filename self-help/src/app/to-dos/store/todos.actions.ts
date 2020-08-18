@@ -7,6 +7,7 @@ export const SET_CATEGORY_FILTERS = '[Todos] Set Category Filters';
 export const SET_COMPLETION_STATUS_FILTER = '[Todos] Set Completion Status Filter';
 export const FETCH_TODOS = '[Todos] Fetch Todos';
 export const CREATE_TODO = '[Todos] Create Todo';
+export const UPDATE_TODO = '[Todos] Update Todo';
 export const LOG_TODO_CHANGES = '[Todos] Log Todo Changes';
 export const REVERT_TODOS_LAST_CHANGED = '[Todos] Revert Todos Last Saved';
 
@@ -22,6 +23,12 @@ export class FetchTodos implements Action {
 
 export class CreateTodo implements Action {
     readonly type: string = CREATE_TODO;
+
+    constructor(public payload: Todo) {}
+}
+
+export class UpdateTodo implements Action {
+    readonly type: string = UPDATE_TODO;
 
     constructor(public payload: Todo) {}
 }

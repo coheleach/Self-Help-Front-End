@@ -1,5 +1,5 @@
 import { Todo } from 'src/app/models/Todo.model';
-import { SET_TODOS, CLEAR_FILTERS, SET_CATEGORY_FILTERS, SET_COMPLETION_STATUS_FILTER, CREATE_TODO } from './todos.actions';
+import { SET_TODOS, CLEAR_FILTERS, SET_CATEGORY_FILTERS, SET_COMPLETION_STATUS_FILTER, CREATE_TODO, UPDATE_TODO } from './todos.actions';
 import { element } from 'protractor';
 
 export interface State {
@@ -53,7 +53,20 @@ export function todosReducer(state: State = initialState, action) {
                     elements: [...state.todos.elements, todoWithMakeshiftId],
                     inMemoryTempId: (state.todos.inMemoryTempId + 1)
                 }
-            }
+            };
+        case UPDATE_TODO:
+            let updateIndex: number = [...state.todos.elements].findIndex((todo, index) => {
+                return todo.id == action.payload.id
+            });
+            let updatedElementsArray: Todo[] = [...state.todos.elements];//.splice(updateIndex, 1, action.payload);
+            updatedElementsArray[updateIndex] = action.payload;
+            return {
+                ...state,
+                todos: {
+                    ...state.todos,
+                    elements: updatedElementsArray
+                }
+            };
         case CLEAR_FILTERS:
             return {
                 ...state,
