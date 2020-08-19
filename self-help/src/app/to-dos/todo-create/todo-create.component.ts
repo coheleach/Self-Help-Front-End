@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { DeactivationComponent } from 'src/app/guards/deactivation-component';
 import { Todo } from 'src/app/models/Todo.model';
 import { TodoService } from 'src/app/services/todo.service';
@@ -18,11 +18,12 @@ import { map, take } from 'rxjs/operators';
   templateUrl: './todo-create.component.html',
   styleUrls: ['./todo-create.component.css']
 })
-export class TodoCreateComponent implements OnInit, DeactivationComponent {
+export class TodoCreateComponent implements OnInit, OnDestroy, DeactivationComponent {
 
   form: FormGroup;
   editMode: boolean = false;
   todoId: string;
+  subscription: Subscription;
 
   constructor(
     private todoFactoryService: TodoFactoryService,
@@ -48,6 +49,10 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
     this.initializeForm();
   }
 
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
   onSubmit(): void {
     let submittedTodo = new Todo(
       this.todoId,
@@ -57,7 +62,8 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
       this.formHelperService.convertISOStringToDate(this.form.get('deadlineDate').value,'-')      
     );
     if(this.editMode) {
-      this.todoService.updateTodo(submittedTodo);
+      //this.todoService.updateTodo(submittedTodo);
+      this.store.dispatch(new fromTodosActions.UpdateTodo(submittedTodo));
     } else {
       //this.todoService.addTodo(submittedTodo);
       this.store.dispatch(new fromTodosActions.CreateTodo(submittedTodo));
@@ -123,16 +129,20 @@ export class TodoCreateComponent implements OnInit, DeactivationComponent {
 
     if(this.editMode) {
       //const todo: Todo = this.todoService.getTodoById(this.todoId);
-      this.store.select('todos').pipe(
+      this.subscription = this.store.select('todos').pipe(
         take(1),
         map((todosState: fromTodosReducer.State) => {
-          return todosState.todos.elements[+this.todoId]
+          return todosState.todos.elements.find(
+            (todoElement: Todo) => {
+              return todoElement.id == this.todoId;
+            }
+          )
         })
       ).subscribe((todo: Todo) => {
         title = todo.title;
         category = todo.category;
         description = todo.description;
-        //use functions to set date as 'YYY-MM-DD'
+        //use functions to set date as 'YYYY-MM-DD'
         deadlineDate = todo.deadlineDate.toISOString().substr(0,10);
       })
     }

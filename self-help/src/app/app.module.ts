@@ -37,7 +37,7 @@ import { TodosEffects } from './to-dos/store/todos.effects';
     HttpClientModule,
     StoreModule.forRoot(appReducer),
     EffectsModule.forRoot([AuthEffects, TodosEffects]),
-    //StoreRouterConnectingModule.forRoot(),
+    StoreRouterConnectingModule.forRoot(),
     StoreDevtoolsModule.instrument({logOnly: environment.production})
   ],
   providers: [

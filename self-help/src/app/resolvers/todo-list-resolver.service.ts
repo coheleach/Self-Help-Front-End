@@ -63,10 +63,12 @@ export class TodoListResolver implements Resolve<Todo[]> {
 
     private tryGetLastLoggedChanges() : Observable<Todo[]> | Todo[] {
         
+
+
         const localStorageTodos: Todo[] = this.inMemoryTodoRecallService.fetchTodosFromLocalStorage();
         if(localStorageTodos) {
             //this.todoService.updateTodos(localStorageTodos);
-            this.store.dispatch(new fromTodosActions.SetTodos(localStorageTodos));
+            this.store.dispatch(new fromTodosActions.SetTodos({ todos: localStorageTodos, fromFirebase: false}));
             return localStorageTodos;
         }
         this.store.dispatch(new fromTodosActions.FetchTodos());
@@ -97,7 +99,7 @@ export class TodoListResolver implements Resolve<Todo[]> {
         let emptyTodoList: Todo[] = [];
         this.firebaseDataService.postUserTodoListNode(emptyTodoList).subscribe(
             (response) => {
-                this.store.dispatch(new fromTodosActions.SetTodos(emptyTodoList));
+                this.store.dispatch(new fromTodosActions.SetTodos({ todos: emptyTodoList, fromFirebase: false}));
                 //this.todoService.updateTodos(emptyTodoList);
                 //this.authService.signInMethod = SignInMethod.manual;
             },

@@ -7,7 +7,8 @@ export interface State {
         elements: Todo[],
         completionStatusFilter: string,
         categoryFilters: string[],
-        inMemoryTempId: number
+        inMemoryTempId: number,
+        lastFetchedTodoIds: string[]
     }
 };
 
@@ -16,7 +17,8 @@ const initialState: State = {
         elements: [],
         completionStatusFilter: '',
         categoryFilters: [],
-        inMemoryTempId: 1
+        inMemoryTempId: 1,
+        lastFetchedTodoIds: []
     }
 }
 
@@ -29,7 +31,8 @@ export function todosReducer(state: State = initialState, action) {
                     ...state.todos,
                     elements: action.payload,
                     completionStatusFilter: '',
-                    categoryFilters: []
+                    categoryFilters: [],
+                    lastFetchedTodoIds: action.payload.fromFirebase ? action.payload.todos.map((element) => {element.id}) : []
                 }
             };
         case CREATE_TODO:
@@ -58,7 +61,7 @@ export function todosReducer(state: State = initialState, action) {
             let updateIndex: number = [...state.todos.elements].findIndex((todo, index) => {
                 return todo.id == action.payload.id
             });
-            let updatedElementsArray: Todo[] = [...state.todos.elements];//.splice(updateIndex, 1, action.payload);
+            let updatedElementsArray: Todo[] = [...state.todos.elements];
             updatedElementsArray[updateIndex] = action.payload;
             return {
                 ...state,

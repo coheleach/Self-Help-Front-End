@@ -14,7 +14,7 @@ export const REVERT_TODOS_LAST_CHANGED = '[Todos] Revert Todos Last Saved';
 export class SetTodos implements Action {
     readonly type: string = SET_TODOS;
 
-    constructor(public payload: Todo[]) {}
+    constructor(public payload: { todos: Todo[], fromFirebase: boolean}) {}
 }
 
 export class FetchTodos implements Action {

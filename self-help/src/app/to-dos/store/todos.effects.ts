@@ -53,6 +53,20 @@ export function retrieveFirebaseTodos(user: User, httpClient: HttpClient, todoFa
     );
 }
 
+export function useOldIdsIfPossible(store: Store<fromAppReducer.AppState>, todos: Todo[]) {
+
+    store.select('todos').pipe(
+        take(1),
+        map((todosState: fromTodosReducer.State) => {
+            for(let i = 0; i < todosState.todos.elements.length; i++) {
+                if(todos[i].id != todosState.todos.elements[i].id) {
+                    todos[i].id = todosState.todos.elements[i].id;
+                }
+            }
+        })
+    )
+}
+
 @Injectable()
 export class TodosEffects {
 
@@ -69,7 +83,7 @@ export class TodosEffects {
                     return retrieveFirebaseTodos(user, this.httpClient, this.todoFactoryService);
                 }),
                 map((todosArray: Todo[]) => {
-                    return new fromTodosActions.SetTodos(todosArray);
+                    return new fromTodosActions.SetTodos({ todos: todosArray, fromFirebase: true});
                 })
                 // switchMap((user: User) => {
                 //     return this.httpClient.get<HttpResponse<any>>(
@@ -115,7 +129,7 @@ export class TodosEffects {
 
     @Effect({dispatch: false})
     logTodoChanges = this.actions$.pipe(
-        ofType(fromTodosActions.CREATE_TODO),
+        ofType(fromTodosActions.CREATE_TODO, fromTodosActions.UPDATE_TODO),
         switchMap(() => {
             return this.store.select('todos').pipe(
                 take(1)
@@ -139,7 +153,7 @@ export class TodosEffects {
         }),
         map((lastSavedTodoList: Todo[]) => {
             this.inMemoryTodoLocalRecallService.removeTodosInLocalStorage();
-            return new fromTodosActions.SetTodos(lastSavedTodoList);
+            return new fromTodosActions.SetTodos({ todos: lastSavedTodoList, fromFirebase: false});
         }),
     );
     
