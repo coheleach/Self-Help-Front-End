@@ -53,16 +53,21 @@ export function retrieveFirebaseTodos(user: User, httpClient: HttpClient, todoFa
     );
 }
 
-export function useOldIdsIfPossible(store: Store<fromAppReducer.AppState>, todos: Todo[]) {
+export function useOldIdsIfPossible(store: Store<fromAppReducer.AppState>, todos: Todo[]): Observable<Todo[]> {
 
-    store.select('todos').pipe(
+    return store.select('todos').pipe(
         take(1),
         map((todosState: fromTodosReducer.State) => {
-            for(let i = 0; i < todosState.todos.elements.length; i++) {
-                if(todos[i].id != todosState.todos.elements[i].id) {
-                    todos[i].id = todosState.todos.elements[i].id;
+            if(
+                todosState.todos.lastFetchedTodos.length != 0
+                &&
+                todosState.todos.lastFetchedTodos.length == todos.length
+            ) {
+                for(let i = 0; i < todos.length; i++) {
+                    todos[i].id = todosState.todos.lastFetchedTodos[i].id;
                 }
             }
+            return todos;
         })
     )
 }
@@ -82,47 +87,15 @@ export class TodosEffects {
                 switchMap((user: User) => {
                     return retrieveFirebaseTodos(user, this.httpClient, this.todoFactoryService);
                 }),
+                switchMap((todosArray: Todo[]) => {
+                    //Use the last saved todo ids if possible
+                    //Otherwise we will regenerate ids for each fetch
+                    //causing bugs downstream
+                    return useOldIdsIfPossible(this.store, todosArray);
+                }),
                 map((todosArray: Todo[]) => {
                     return new fromTodosActions.SetTodos({ todos: todosArray, fromFirebase: true});
                 })
-                // switchMap((user: User) => {
-                //     return this.httpClient.get<HttpResponse<any>>(
-                //         'https://ng-self-help.firebaseio.com/todos.json',
-                //         {
-                //             params: {
-                //                 orderBy: '"user"',
-                //                 equalTo: '"' + user.email + '"'
-                //             },
-                //             observe: 'response',
-                //         }
-                //     )
-                // }),
-                // map((response: HttpResponse<any>) => {
-                //     let todoArray: Todo[] = [];
-                //     let responseBody = response['body'];
-                //     console.log(responseBody);
-                //     for(let property in responseBody) {
-                //     //Prepare todo factory for this session
-                //     //of id generation
-                //         this.todoFactoryService.setUserNodeKey(property);
-                //         if(responseBody[property].todos) {
-                //             let idIncrement = 0;
-                //             for(let allStringTodo of responseBody[property].todos) {
-                //                 //Must convert stringified datetimes to datetimes
-                //                 //and generate an id
-                //                 todoArray.push(this.todoFactoryService.generateTodoWithoutId(
-                //                     allStringTodo['title'],
-                //                     allStringTodo['description'],
-                //                     allStringTodo['category'],
-                //                     new Date(allStringTodo['deadLineDate']),
-                //                     new Date(allStringTodo['creationDate']),
-                //                     allStringTodo['completed']
-                //                 ));
-                //             }
-                //         }
-                //     }
-                //     return new fromTodosActions.SetTodos(todoArray);
-                // })
             )
         })
     )
@@ -143,18 +116,27 @@ export class TodosEffects {
     @Effect()
     revertToLastSavedTodos = this.actions$.pipe(
         ofType(fromTodosActions.REVERT_TODOS_LAST_CHANGED),
+        // switchMap(() => {
+        //     return this.store.select('auth').pipe(
+        //         take(1)
+        //     );
+        // }),
+        // switchMap((authState: fromAuthReducer.State) => {
+        //     return retrieveFirebaseTodos(authState.user, this.httpClient, this.todoFactoryService);
+        // }),
+        // map((lastSavedTodoList: Todo[]) => {
+        //     this.inMemoryTodoLocalRecallService.removeTodosInLocalStorage();
+        //     return new fromTodosActions.SetTodos({ todos: lastSavedTodoList, fromFirebase: false});
+        // })
         switchMap(() => {
-            return this.store.select('auth').pipe(
+            return this.store.select('todos').pipe(
                 take(1)
             );
         }),
-        switchMap((authState: fromAuthReducer.State) => {
-            return retrieveFirebaseTodos(authState.user, this.httpClient, this.todoFactoryService);
-        }),
-        map((lastSavedTodoList: Todo[]) => {
+        map((todosState: fromTodosReducer.State) => {
             this.inMemoryTodoLocalRecallService.removeTodosInLocalStorage();
-            return new fromTodosActions.SetTodos({ todos: lastSavedTodoList, fromFirebase: false});
-        }),
+            return new fromTodosActions.SetTodos({ todos: todosState.todos.lastFetchedTodos, fromFirebase: false})
+        })
     );
     
     constructor(

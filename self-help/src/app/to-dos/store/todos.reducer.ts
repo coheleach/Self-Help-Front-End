@@ -1,6 +1,5 @@
 import { Todo } from 'src/app/models/Todo.model';
 import { SET_TODOS, CLEAR_FILTERS, SET_CATEGORY_FILTERS, SET_COMPLETION_STATUS_FILTER, CREATE_TODO, UPDATE_TODO } from './todos.actions';
-import { element } from 'protractor';
 
 export interface State {
     todos: {
@@ -8,7 +7,7 @@ export interface State {
         completionStatusFilter: string,
         categoryFilters: string[],
         inMemoryTempId: number,
-        lastFetchedTodoIds: string[]
+        lastFetchedTodos: Todo[]
     }
 };
 
@@ -18,7 +17,7 @@ const initialState: State = {
         completionStatusFilter: '',
         categoryFilters: [],
         inMemoryTempId: 1,
-        lastFetchedTodoIds: []
+        lastFetchedTodos: []
     }
 }
 
@@ -29,10 +28,10 @@ export function todosReducer(state: State = initialState, action) {
                 ...state,
                 todos: {
                     ...state.todos,
-                    elements: action.payload,
+                    elements: [ ...action.payload.todos ],
                     completionStatusFilter: '',
                     categoryFilters: [],
-                    lastFetchedTodoIds: action.payload.fromFirebase ? action.payload.todos.map((element) => {element.id}) : []
+                    lastFetchedTodos: action.payload.fromFirebase ? action.payload.todos : [ ...state.todos.lastFetchedTodos ]
                 }
             };
         case CREATE_TODO:

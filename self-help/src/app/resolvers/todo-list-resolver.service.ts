@@ -71,6 +71,7 @@ export class TodoListResolver implements Resolve<Todo[]> {
             this.store.dispatch(new fromTodosActions.SetTodos({ todos: localStorageTodos, fromFirebase: false}));
             return localStorageTodos;
         }
+        
         this.store.dispatch(new fromTodosActions.FetchTodos());
         this.actions$.pipe(
             ofType(fromTodosActions.SET_TODOS),
@@ -82,16 +83,6 @@ export class TodoListResolver implements Resolve<Todo[]> {
                 alert('encountered an error retrieving user todos');
             }
         );
-        
-        // this.firebaseDataService.getAllUsersTodos().subscribe(
-        //     (todoList: Todo[]) => {
-        //         //this.todoService.updateTodos(todoList);
-        //         this.store.dispatch(new fromTodosActions.SetTodos(todoList));
-        //     },
-        //     error => {
-        //         alert('encountered an error retrieving user todos');
-        //     }
-        // );
     }
 
     private scaffoldNewUserStorage(): Todo[] | Observable<Todo[]> {
