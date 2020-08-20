@@ -37,7 +37,8 @@ export class TodoDetailComponent implements OnInit {
   }
 
   onRemove(): void {
-    this.todoService.removeTodoById(this.todo.id);
+    //this.todoService.removeTodoById(this.todo.id);
+    this.store.dispatch(new fromTodoActions.DeleteTodo(this.todo.id));
   }
 
 }

@@ -1,5 +1,5 @@
 import { Todo } from 'src/app/models/Todo.model';
-import { SET_TODOS, CLEAR_FILTERS, SET_CATEGORY_FILTERS, SET_COMPLETION_STATUS_FILTER, CREATE_TODO, UPDATE_TODO } from './todos.actions';
+import { SET_TODOS, CLEAR_FILTERS, SET_CATEGORY_FILTERS, SET_COMPLETION_STATUS_FILTER, CREATE_TODO, UPDATE_TODO, DELETE_TODO } from './todos.actions';
 
 export interface State {
     todos: {
@@ -67,6 +67,17 @@ export function todosReducer(state: State = initialState, action) {
                 todos: {
                     ...state.todos,
                     elements: updatedElementsArray
+                }
+            };
+        case DELETE_TODO:
+            let alteredElementsArray: Todo[] = [...state.todos.elements].filter((todo: Todo) => {
+                return todo.id != action.payload
+            });
+            return {
+                ...state,
+                todos: {
+                    ...state.todos,
+                    elements: alteredElementsArray
                 }
             };
         case CLEAR_FILTERS:

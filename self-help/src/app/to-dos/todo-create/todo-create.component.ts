@@ -50,7 +50,9 @@ export class TodoCreateComponent implements OnInit, OnDestroy, DeactivationCompo
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    if(this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   onSubmit(): void {

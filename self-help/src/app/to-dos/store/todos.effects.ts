@@ -102,7 +102,7 @@ export class TodosEffects {
 
     @Effect({dispatch: false})
     logTodoChanges = this.actions$.pipe(
-        ofType(fromTodosActions.CREATE_TODO, fromTodosActions.UPDATE_TODO),
+        ofType(fromTodosActions.CREATE_TODO, fromTodosActions.UPDATE_TODO, fromTodosActions.DELETE_TODO),
         switchMap(() => {
             return this.store.select('todos').pipe(
                 take(1)
