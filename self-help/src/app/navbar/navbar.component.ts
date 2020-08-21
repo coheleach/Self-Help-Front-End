@@ -55,7 +55,8 @@ export class NavbarComponent implements OnInit {
   }
 
   onSaveChanges() {
-    this.todoService.saveTodoListChanges();
+    //this.todoService.saveTodoListChanges();
+    this.store.dispatch(new fromTodosAction.TrySaveTodos());
   }
 
 }

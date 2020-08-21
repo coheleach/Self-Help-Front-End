@@ -11,6 +11,8 @@ export const UPDATE_TODO = '[Todos] Update Todo';
 export const DELETE_TODO = '[Todos] Delete Todo';
 export const LOG_TODO_CHANGES = '[Todos] Log Todo Changes';
 export const REVERT_TODOS_LAST_CHANGED = '[Todos] Revert Todos Last Saved';
+export const TRY_SAVE_TODOS = '[Todos] Try Save Todos';
+export const HANDLE_SAVE_SUCCESS = '[Todos] Handle Save Response';
 
 export class SetTodos implements Action {
     readonly type: string = SET_TODOS;
@@ -62,4 +64,12 @@ export class SetCompletionStatusFilter implements Action {
 
 export class LogTodoInLocalStorage implements Action {
     readonly type: string = LOG_TODO_CHANGES;
+}
+
+export class TrySaveTodos implements Action {
+    readonly type: string = TRY_SAVE_TODOS;
+}
+
+export class HandleSaveSuccess implements Action {
+    readonly type: string = HANDLE_SAVE_SUCCESS;
 }

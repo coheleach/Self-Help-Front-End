@@ -1,5 +1,5 @@
 import { Todo } from 'src/app/models/Todo.model';
-import { SET_TODOS, CLEAR_FILTERS, SET_CATEGORY_FILTERS, SET_COMPLETION_STATUS_FILTER, CREATE_TODO, UPDATE_TODO, DELETE_TODO } from './todos.actions';
+import { SET_TODOS, CLEAR_FILTERS, SET_CATEGORY_FILTERS, SET_COMPLETION_STATUS_FILTER, CREATE_TODO, UPDATE_TODO, DELETE_TODO, HANDLE_SAVE_SUCCESS } from './todos.actions';
 
 export interface State {
     todos: {
@@ -105,6 +105,14 @@ export function todosReducer(state: State = initialState, action) {
                     completionStatusFilter: action.payload
                 }
             }
+        case HANDLE_SAVE_SUCCESS:
+            return {
+                ...state,
+                todos: {
+                    ...state.todos,
+                    lastFetchedTodos: [...state.todos.elements]
+                }
+            };
         default:
             return state;
     }
